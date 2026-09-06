@@ -3,365 +3,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>iPod Touch Forum</title>
+<title>iPod Forum</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-
-body{
- margin:0;
- background:#c9ced3;
- font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
- color:#111;
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
 
-.app{
- max-width:520px;
- min-height:100vh;
- margin:auto;
- background:linear-gradient(#f8f8f8,#dfe3e7);
- box-shadow:0 0 30px #777;
+body{
+  margin:0;
+  background:#d5d5d5;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#222;
+}
+
+#app{
+  max-width:520px;
+  min-height:100vh;
+  margin:auto;
+  background:#f5f5f5;
+  box-shadow:0 0 20px #777;
 }
 
 .navbar{
- height:52px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 9px;
- color:white;
- background:linear-gradient(#707b86,#252d34);
- border-bottom:1px solid #111;
- position:sticky;
- top:0;
- z-index:10;
+  height:55px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10px;
+  background:linear-gradient(#fafafa,#bdbdbd);
+  border-bottom:1px solid #777;
 }
 
 .navbar h1{
- margin:0;
- font-size:20px;
- text-shadow:0 -1px #000;
+  margin:0;
+  font-size:20px;
+  text-shadow:0 1px white;
 }
 
-.button{
- border:1px solid #111;
- border-radius:7px;
- padding:7px 11px;
- color:white;
- font-weight:bold;
- background:linear-gradient(#737f89,#303940);
- box-shadow:inset 0 1px #aaa,0 1px 2px #111;
+button{
+  cursor:pointer;
 }
 
-.content{
- padding:12px;
+.navbutton{
+  border:1px solid #777;
+  border-radius:7px;
+  padding:7px 12px;
+  font-weight:bold;
+  background:linear-gradient(#fff,#bbb);
+}
+
+.screen{
+  padding:12px;
+}
+
+.hidden{
+  display:none!important;
 }
 
 .search,
 input,
-textarea{
- width:100%;
- border:1px solid #999;
- border-radius:8px;
- padding:10px;
- font-family:inherit;
- font-size:15px;
- background:white;
- box-shadow:inset 0 1px 3px #bbb;
+textarea,
+select{
+  width:100%;
+  border:1px solid #999;
+  border-radius:9px;
+  padding:11px;
+  font-size:15px;
+  background:white;
 }
 
 .search{
- margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 textarea{
- height:110px;
- resize:none;
+  min-height:110px;
+  resize:vertical;
+  margin:6px 0 14px;
 }
 
 .section{
- margin:12px 5px 5px;
- color:#555;
- font-size:13px;
- font-weight:bold;
- text-shadow:0 1px white;
+  margin-bottom:20px;
+}
+
+.section-title{
+  color:#555;
+  font-size:13px;
+  font-weight:bold;
+  margin:8px 10px;
+  text-transform:uppercase;
 }
 
 .list{
- overflow:hidden;
- background:white;
- border:1px solid #999;
- border-radius:10px;
- box-shadow:0 1px 4px #999;
- margin-bottom:14px;
+  background:white;
+  border:1px solid #aaa;
+  border-radius:10px;
+  overflow:hidden;
 }
 
-.row{
- display:flex;
- align-items:center;
- gap:10px;
- padding:11px;
- background:linear-gradient(#fff,#e9e9e9);
- border-bottom:1px solid #ccc;
- cursor:pointer;
+.item{
+  padding:14px;
+  border-bottom:1px solid #ddd;
+  background:linear-gradient(#fff,#eee);
+  cursor:pointer;
 }
 
-.row:last-child{
- border-bottom:none;
+.item:last-child{
+  border-bottom:0;
 }
 
-.row:active{
- background:#ccc;
+.item:active{
+  background:#ccc;
 }
 
-.icon{
- width:40px;
- height:40px;
- flex:none;
- display:flex;
- align-items:center;
- justify-content:center;
- border-radius:8px;
- color:white;
- font-size:21px;
- background:linear-gradient(#74b8ed,#1764a5);
- border:1px solid #15507e;
- box-shadow:inset 0 1px #fff,0 1px 2px #777;
+.item-title{
+  font-weight:bold;
+  font-size:16px;
 }
 
-.info{
- flex:1;
-}
-
-.title{
- font-size:16px;
- font-weight:bold;
-}
-
-.subtitle{
- margin-top:3px;
- color:#777;
- font-size:12px;
-}
-
-.arrow{
- color:#aaa;
- font-size:25px;
-}
-
-.topic{
- overflow:hidden;
- background:white;
- border:1px solid #999;
- border-radius:10px;
- box-shadow:0 1px 4px #999;
-}
-
-.post{
- padding:13px;
- border-bottom:1px solid #ccc;
-}
-
-.post:last-child{
- border-bottom:none;
-}
-
-.user{
- display:flex;
- align-items:center;
- gap:9px;
-}
-
-.avatar{
- width:36px;
- height:36px;
- border-radius:50%;
- display:flex;
- align-items:center;
- justify-content:center;
- color:white;
- font-weight:bold;
- background:linear-gradient(#ddd,#888);
- border:1px solid #777;
-}
-
-.username{
- font-weight:bold;
-}
-
-.date{
- color:#888;
- font-size:11px;
-}
-
-.post h2{
- font-size:19px;
- margin:12px 0 7px;
-}
-
-.post p{
- line-height:1.45;
- white-space:pre-wrap;
-}
-
-.composer{
- display:none;
- margin-top:10px;
- padding:10px;
- background:#eee;
- border:1px solid #999;
- border-radius:10px;
- box-shadow:0 1px 3px #888;
-}
-
-.composer input,
-.composer textarea{
- margin-bottom:8px;
+.item-info{
+  color:#777;
+  font-size:12px;
+  margin-top:5px;
 }
 
 .empty{
- padding:30px;
- text-align:center;
- color:#777;
+  padding:25px 15px;
+  text-align:center;
+  color:#777;
 }
 
-.footer{
- padding:20px;
- text-align:center;
- color:#777;
- font-size:11px;
+.card{
+  background:white;
+  border:1px solid #aaa;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.bigbutton{
+  width:100%;
+  padding:12px;
+  border:1px solid #777;
+  border-radius:9px;
+  font-size:16px;
+  font-weight:bold;
+  background:linear-gradient(#fff,#aaa);
+}
+
+.back{
+  margin-bottom:12px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.profile{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:22px;
+  font-weight:bold;
+  background:linear-gradient(#eee,#999);
+  border:1px solid #777;
+}
+
+.username{
+  font-weight:bold;
+}
+
+.reply{
+  background:white;
+  border:1px solid #aaa;
+  border-radius:9px;
+  padding:12px;
+  margin-bottom:8px;
+}
+
+.reply-user{
+  font-weight:bold;
+}
+
+.reply-date{
+  color:#888;
+  font-size:11px;
+  margin-top:3px;
+}
+
+.reply-body,
+.topic-body{
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin-top:9px;
+}
+
+.error,
+.success{
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+
+.error{
+  color:#900;
+  background:#ffe0e0;
+  border:1px solid #d88;
+}
+
+.success{
+  color:#075b07;
+  background:#dff5df;
+  border:1px solid #8ac58a;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#555;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div id="app">
 
 <header class="navbar">
 
-<button
- id="back"
- class="button"
- style="display:none"
->
-‹ Foro
+<button class="navbutton" onclick="goHome()">
+Inicio
 </button>
 
-<h1 id="pageTitle">Foro</h1>
+<h1 id="pageTitle">
+iPod Forum
+</h1>
 
-<button
- id="newTopic"
- class="button"
->
-Nuevo
+<button class="navbutton" onclick="showProfile()">
+Perfil
 </button>
 
 </header>
 
+<div class="screen">
 
-<main class="content" id="content">
+<div id="message"></div>
+
+
+<!-- ================= HOME ================= -->
+
+<div id="home">
 
 <input
- id="search"
- class="search"
- placeholder="Buscar en el foro..."
+  id="search"
+  class="search"
+  placeholder="Buscar hilos..."
+  oninput="renderTopics()"
 >
 
 
 <div class="section">
-CATEGORÍAS
-</div>
 
+<div class="section-title">
+Categorías
+</div>
 
 <div class="list">
 
-<div class="row"
- onclick="openCategory('Música')">
-
-<div class="icon">♫</div>
-
-<div class="info">
-
-<div class="title">
-Música
+<div class="item" onclick="openCategory('Música')">
+🎵 Música
 </div>
 
-<div class="subtitle">
-Álbumes, artistas y producción
+<div class="item" onclick="openCategory('Juegos')">
+🎮 Juegos
 </div>
 
+<div class="item" onclick="openCategory('Apps')">
+📱 Apps
 </div>
 
-<div class="arrow">›</div>
-
+<div class="item" onclick="openCategory('Off-topic')">
+💬 Off-topic
 </div>
-
-
-<div class="row"
- onclick="openCategory('Juegos')">
-
-<div class="icon">🎮</div>
-
-<div class="info">
-
-<div class="title">
-Juegos
-</div>
-
-<div class="subtitle">
-Consolas, juegos y comunidad
-</div>
-
-</div>
-
-<div class="arrow">›</div>
-
-</div>
-
-
-<div class="row"
- onclick="openCategory('Apps')">
-
-<div class="icon">▦</div>
-
-<div class="info">
-
-<div class="title">
-Apps
-</div>
-
-<div class="subtitle">
-iOS, Android y software
-</div>
-
-</div>
-
-<div class="arrow">›</div>
-
-</div>
-
-
-<div class="row"
- onclick="openCategory('Off-topic')">
-
-<div class="icon">☁</div>
-
-<div class="info">
-
-<div class="title">
-Off-topic
-</div>
-
-<div class="subtitle">
-Habla de cualquier cosa
-</div>
-
-</div>
-
-<div class="arrow">›</div>
 
 </div>
 
@@ -369,76 +307,183 @@ Habla de cualquier cosa
 
 
 <div class="section">
-TEMAS RECIENTES
+
+<div class="row">
+
+<div class="section-title">
+Hilos recientes
 </div>
-
-
-<div class="list" id="topics">
-
-<div class="empty">
-Cargando...
-</div>
-
-</div>
-
-
-<div
- id="composer"
- class="composer"
->
-
-<input
- id="username"
- placeholder="Tu nombre"
->
-
-<input
- id="topicTitle"
- placeholder="Título del tema"
->
-
-<textarea
- id="topicBody"
- placeholder="Escribe tu publicación..."
-></textarea>
 
 <button
- class="button"
- onclick="createTopic()"
->
-Publicar tema
+  class="navbutton"
+  onclick="showCreateTopic()">
+Nuevo
 </button>
 
 </div>
 
-
-<div class="footer">
-iPod Touch Forum · ✦
+<div
+  id="topics"
+  class="list">
 </div>
 
-</main>
+</div>
 
+</div>
+
+
+<!-- ================= PERFIL ================= -->
+
+<div id="profilePage" class="hidden">
+
+<div
+  id="profileBox"
+  class="card">
+</div>
+
+</div>
+
+
+<!-- ================= CREAR HILO ================= -->
+
+<div id="createTopicPage" class="hidden">
+
+<button
+  class="navbutton back"
+  onclick="goHome()">
+← Volver
+</button>
+
+<div class="card">
+
+<h2>Nuevo hilo</h2>
+
+<label>
+Categoría
+</label>
+
+<select id="topicCategory">
+
+<option>Música</option>
+<option>Juegos</option>
+<option>Apps</option>
+<option>Off-topic</option>
+
+</select>
+
+
+<label>
+Título
+</label>
+
+<input
+  id="topicTitle"
+  maxlength="100"
+  placeholder="Título del hilo"
+>
+
+
+<label>
+Mensaje
+</label>
+
+<textarea
+  id="topicBody"
+  placeholder="Escribe tu mensaje..."
+></textarea>
+
+
+<button
+  class="bigbutton"
+  onclick="createTopic()">
+
+Publicar hilo
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= CATEGORÍA ================= -->
+
+<div id="categoryPage" class="hidden">
+
+<button
+  class="navbutton back"
+  onclick="goHome()">
+← Volver
+</button>
+
+<h2 id="categoryTitle"></h2>
+
+<div
+  id="categoryTopics"
+  class="list">
+</div>
+
+</div>
+
+
+<!-- ================= HILO ================= -->
+
+<div id="topicPage" class="hidden">
+
+<button
+  class="navbutton back"
+  onclick="goHome()">
+← Volver
+</button>
+
+<div id="topicContent"></div>
+
+<div class="section-title">
+Respuestas
+</div>
+
+<div id="replies"></div>
+
+
+<div class="card">
+
+<h3>
+Responder
+</h3>
+
+<textarea
+  id="replyBody"
+  placeholder="Escribe una respuesta..."
+></textarea>
+
+<button
+  class="bigbutton"
+  onclick="sendReply()">
+
+Responder
+
+</button>
+
+</div>
+
+</div>
+
+</div>
 </div>
 
 
 <script>
 
 /*
-========================================
-SUPABASE
-========================================
+====================================================
+CONFIGURACIÓN DE SUPABASE
 
-CAMBIA ESTAS DOS VARIABLES.
+CAMBIA SOLAMENTE ESTAS DOS VARIABLES.
 
-Ejemplo:
+NO USES LA SERVICE_ROLE KEY.
 
-const SUPABASE_URL =
-"https://abcdefgh.supabase.co";
-
-const SUPABASE_KEY =
-"tu_publishable_key";
-
-NO uses la service_role key.
+Usa la Publishable key / anon key.
+====================================================
 */
 
 const SUPABASE_URL =
@@ -448,716 +493,910 @@ const SUPABASE_KEY =
 "TU_PUBLISHABLE_KEY";
 
 
-const supabase =
+const supabaseClient =
 window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 
-let currentCategory = null;
+/*
+====================================================
+ESTADO
+====================================================
+*/
+
+let currentUser =
+localStorage.getItem("forum_username") || null;
+
+let currentTopic = null;
+
+let topics = [];
 
 
 /*
-========================================
-UTILIDADES
-========================================
+====================================================
+SEGURIDAD
+====================================================
 */
 
-function safe(text){
+function escapeHTML(text){
 
- return String(text)
- .replaceAll("&","&amp;")
- .replaceAll("<","&lt;")
- .replaceAll(">","&gt;")
- .replaceAll('"',"&quot;")
- .replaceAll("'","&#039;");
+  const div =
+  document.createElement("div");
 
+  div.textContent =
+  text;
+
+  return div.innerHTML;
 }
 
 
 /*
-========================================
-CARGAR TEMAS
-========================================
+====================================================
+MENSAJES
+====================================================
 */
 
-async function loadTopics(
- category=null,
- searchText=""
+function showMessage(
+  text,
+  type="error"
 ){
 
- let query =
- supabase
- .from("topics")
- .select("*")
- .order(
-  "created_at",
-  {ascending:false}
- );
+  const box =
+  document.getElementById("message");
 
+  box.innerHTML =
+  `<div class="${type}">
+    ${escapeHTML(text)}
+  </div>`;
 
- if(category){
-
-  query =
-  query.eq(
-   "category",
-   category
-  );
-
- }
-
-
- if(searchText){
-
-  query =
-  query.ilike(
-   "title",
-   `%${searchText}%`
-  );
-
- }
-
-
- const {
-  data,
-  error
- } = await query;
-
-
- if(error){
-
-  console.error(error);
-
-  document.getElementById(
-   "topics"
-  ).innerHTML = `
-   <div class="empty">
-    No se pudo conectar con el foro.
-   </div>
-  `;
-
-  return;
-
- }
-
-
- renderTopics(data || []);
-
+  setTimeout(()=>{
+    box.innerHTML="";
+  },3500);
 }
 
 
 /*
-========================================
-MOSTRAR TEMAS
-========================================
+====================================================
+OCULTAR PANTALLAS
+====================================================
 */
 
-function renderTopics(data){
+function hideAll(){
 
- const box =
- document.getElementById(
-  "topics"
- );
+  document
+  .getElementById("home")
+  .classList.add("hidden");
+
+  document
+  .getElementById("profilePage")
+  .classList.add("hidden");
+
+  document
+  .getElementById("createTopicPage")
+  .classList.add("hidden");
+
+  document
+  .getElementById("categoryPage")
+  .classList.add("hidden");
+
+  document
+  .getElementById("topicPage")
+  .classList.add("hidden");
+}
 
 
- box.innerHTML = "";
+/*
+====================================================
+INICIO
+====================================================
+*/
+
+async function goHome(){
+
+  hideAll();
+
+  document
+  .getElementById("home")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("pageTitle")
+  .textContent="iPod Forum";
+
+  await loadTopics();
+}
 
 
- if(data.length === 0){
+/*
+====================================================
+CARGAR HILOS
+====================================================
+*/
+
+async function loadTopics(){
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .from("topics")
+  .select("*")
+  .order(
+    "created_at",
+    {ascending:false}
+  );
+
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      "No se pudieron cargar los hilos."
+    );
+
+    return;
+  }
+
+
+  topics =
+  data || [];
+
+  renderTopics();
+}
+
+
+/*
+====================================================
+MOSTRAR HILOS
+====================================================
+*/
+
+function renderTopics(){
+
+  const container =
+  document.getElementById("topics");
+
+  const search =
+  (
+    document.getElementById("search")
+    .value || ""
+  ).toLowerCase();
+
+
+  const filtered =
+  topics.filter(topic =>
+
+    topic.title
+    .toLowerCase()
+    .includes(search)
+
+    ||
+
+    topic.body
+    .toLowerCase()
+    .includes(search)
+
+  );
+
+
+  if(filtered.length===0){
+
+    container.innerHTML =
+
+    `<div class="empty">
+      Todavía no hay hilos.
+      <br><br>
+      Sé el primero en crear uno.
+    </div>`;
+
+    return;
+  }
+
+
+  container.innerHTML =
+
+  filtered.map(topic => `
+
+    <div
+      class="item"
+      onclick="openTopic(${topic.id})">
+
+      <div class="item-title">
+        ${escapeHTML(topic.title)}
+      </div>
+
+      <div class="item-info">
+        ${escapeHTML(topic.category)}
+        ·
+        ${escapeHTML(topic.username)}
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+
+/*
+====================================================
+PERFIL
+====================================================
+*/
+
+function showProfile(){
+
+  hideAll();
+
+  document
+  .getElementById("profilePage")
+  .classList.remove("hidden");
+
+  document
+  .getElementById("pageTitle")
+  .textContent="Perfil";
+
+  renderProfile();
+}
+
+
+function renderProfile(){
+
+  const box =
+  document.getElementById("profileBox");
+
+
+  if(!currentUser){
+
+    box.innerHTML = `
+
+      <h2>
+        Crear perfil
+      </h2>
+
+      <p>
+        Elige el nombre que utilizarás
+        en el foro.
+      </p>
+
+      <input
+        id="username"
+        maxlength="20"
+        placeholder="Nombre de usuario">
+
+      <button
+        class="bigbutton"
+        onclick="createProfile()">
+
+        Crear perfil
+
+      </button>
+
+    `;
+
+    return;
+  }
+
 
   box.innerHTML = `
-   <div class="empty">
-    Todavía no hay publicaciones.
-   </div>
+
+    <div class="profile">
+
+      <div class="avatar">
+        ${escapeHTML(
+          currentUser
+          .charAt(0)
+          .toUpperCase()
+        )}
+      </div>
+
+      <div>
+
+        <div class="username">
+          ${escapeHTML(currentUser)}
+        </div>
+
+        <div style="color:#777">
+          Miembro del foro
+        </div>
+
+      </div>
+
+    </div>
+
+    <br>
+
+    <button
+      class="bigbutton"
+      onclick="logout()">
+
+      Cambiar perfil
+
+    </button>
+
   `;
-
-  return;
-
- }
+}
 
 
- data.forEach(topic => {
+async function createProfile(){
 
-  const row =
-  document.createElement(
-   "div"
+  const username =
+  document
+  .getElementById("username")
+  .value
+  .trim();
+
+
+  if(username.length < 3){
+
+    showMessage(
+      "El nombre debe tener al menos 3 caracteres."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("profiles")
+  .insert({
+    username:username
+  });
+
+
+  if(error){
+
+    if(error.code==="23505"){
+
+      showMessage(
+        "Ese nombre de usuario ya existe."
+      );
+
+    }else{
+
+      console.error(error);
+
+      showMessage(
+        "No se pudo crear el perfil."
+      );
+
+    }
+
+    return;
+  }
+
+
+  currentUser =
+  username;
+
+  localStorage.setItem(
+    "forum_username",
+    username
   );
 
 
-  row.className = "row";
+  showMessage(
+    "Perfil creado correctamente.",
+    "success"
+  );
+
+  renderProfile();
+}
 
 
-  row.innerHTML = `
+function logout(){
 
-   <div class="icon">
-    💬
-   </div>
+  currentUser=null;
 
-   <div class="info">
+  localStorage.removeItem(
+    "forum_username"
+  );
 
-    <div class="title">
-     ${safe(topic.title)}
-    </div>
+  renderProfile();
 
-    <div class="subtitle">
-     ${safe(topic.username)}
-     ·
-     ${safe(topic.category)}
-    </div>
-
-   </div>
-
-   <div class="arrow">
-    ›
-   </div>
-  `;
-
-
-  row.onclick = () =>
-   openTopic(topic.id);
-
-
-  box.appendChild(row);
-
- });
-
+  showMessage(
+    "Perfil desconectado.",
+    "success"
+  );
 }
 
 
 /*
-========================================
-CATEGORÍA
-========================================
+====================================================
+NUEVO HILO
+====================================================
 */
 
-async function openCategory(category){
+function showCreateTopic(){
 
- currentCategory =
- category;
+  if(!currentUser){
 
+    showMessage(
+      "Primero debes crear un perfil."
+    );
 
- document.getElementById(
-  "pageTitle"
- ).textContent =
- category;
+    showProfile();
 
-
- document.getElementById(
-  "back"
- ).style.display =
- "block";
+    return;
+  }
 
 
- document.getElementById(
-  "content"
- ).innerHTML = `
+  hideAll();
 
-  <div class="section">
-   TEMAS EN ${safe(
-    category.toUpperCase()
-   )}
-  </div>
+  document
+  .getElementById("createTopicPage")
+  .classList.remove("hidden");
 
-  <div
-   class="list"
-   id="topics"
-  >
-   <div class="empty">
-    Cargando...
-   </div>
-  </div>
-
-  <div class="footer">
-   iPod Touch Forum · ✦
-  </div>
-
- `;
+  document
+  .getElementById("pageTitle")
+  .textContent="Nuevo hilo";
+}
 
 
- await loadTopics(
-  category
- );
+async function createTopic(){
 
+  if(!currentUser){
+
+    showMessage(
+      "Primero crea un perfil."
+    );
+
+    return;
+  }
+
+
+  const category =
+  document
+  .getElementById("topicCategory")
+  .value;
+
+
+  const title =
+  document
+  .getElementById("topicTitle")
+  .value
+  .trim();
+
+
+  const body =
+  document
+  .getElementById("topicBody")
+  .value
+  .trim();
+
+
+  if(!title || !body){
+
+    showMessage(
+      "Completa el título y el mensaje."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("topics")
+  .insert({
+
+    category:category,
+
+    title:title,
+
+    body:body,
+
+    username:currentUser
+
+  });
+
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      "No se pudo publicar el hilo."
+    );
+
+    return;
+  }
+
+
+  document
+  .getElementById("topicTitle")
+  .value="";
+
+
+  document
+  .getElementById("topicBody")
+  .value="";
+
+
+  showMessage(
+    "Hilo publicado.",
+    "success"
+  );
+
+
+  setTimeout(
+    goHome,
+    700
+  );
 }
 
 
 /*
-========================================
-ABRIR TEMA
-========================================
+====================================================
+CATEGORÍAS
+====================================================
+*/
+
+function openCategory(category){
+
+  hideAll();
+
+  document
+  .getElementById("categoryPage")
+  .classList
+  .remove("hidden");
+
+
+  document
+  .getElementById("pageTitle")
+  .textContent =
+  category;
+
+
+  document
+  .getElementById("categoryTitle")
+  .textContent =
+  category;
+
+
+  const container =
+  document
+  .getElementById("categoryTopics");
+
+
+  const filtered =
+  topics.filter(
+    topic =>
+    topic.category === category
+  );
+
+
+  if(!filtered.length){
+
+    container.innerHTML =
+
+    `<div class="empty">
+      No hay hilos en esta categoría.
+    </div>`;
+
+    return;
+  }
+
+
+  container.innerHTML =
+
+  filtered.map(topic => `
+
+    <div
+      class="item"
+      onclick="openTopic(${topic.id})">
+
+      <div class="item-title">
+        ${escapeHTML(topic.title)}
+      </div>
+
+      <div class="item-info">
+        ${escapeHTML(topic.username)}
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+
+/*
+====================================================
+ABRIR HILO
+====================================================
 */
 
 async function openTopic(id){
 
- const {
-  data:topic,
-  error
- } =
- await supabase
- .from("topics")
- .select("*")
- .eq("id",id)
- .single();
+  const topic =
+  topics.find(
+    t => t.id === id
+  );
 
 
- if(error || !topic)
-  return;
+  if(!topic){
+
+    showMessage(
+      "No se encontró el hilo."
+    );
+
+    return;
+  }
 
 
- const {
-  data:replies
- } =
- await supabase
- .from("replies")
- .select("*")
- .eq(
-  "topic_id",
-  id
- )
- .order(
-  "created_at",
-  {ascending:true}
- );
+  currentTopic=id;
+
+  hideAll();
+
+  document
+  .getElementById("topicPage")
+  .classList
+  .remove("hidden");
 
 
- document.getElementById(
-  "pageTitle"
- ).textContent =
- "Tema";
+  document
+  .getElementById("pageTitle")
+  .textContent =
+  "Hilo";
 
 
- document.getElementById(
-  "back"
- ).style.display =
- "block";
+  document
+  .getElementById("topicContent")
+  .innerHTML = `
 
+    <div class="card">
 
- document.getElementById(
-  "newTopic"
- ).style.display =
- "none";
-
-
- let repliesHTML = "";
-
-
- (replies || []).forEach(
- reply => {
-
-  repliesHTML += `
-
-   <div class="post">
-
-    <div class="user">
-
-     <div class="avatar">
-      ${safe(
-       reply.username[0] || "?"
-      )}
-     </div>
-
-     <div>
-
-      <div class="username">
-       ${safe(
-        reply.username
-       )}
+      <div class="item-info">
+        ${escapeHTML(topic.category)}
       </div>
 
-      <div class="date">
-       ${new Date(
-        reply.created_at
-       ).toLocaleString()}
+      <h2>
+        ${escapeHTML(topic.title)}
+      </h2>
+
+      <div class="item-info">
+        Por ${escapeHTML(topic.username)}
       </div>
 
-     </div>
+      <div class="topic-body">
+        ${escapeHTML(topic.body)}
+      </div>
 
     </div>
-
-    <p>
-     ${safe(reply.body)}
-    </p>
-
-   </div>
 
   `;
 
- });
+
+  await loadReplies(id);
+}
 
 
- document.getElementById(
-  "content"
- ).innerHTML = `
+/*
+====================================================
+RESPUESTAS
+====================================================
+*/
 
-  <div class="topic">
+async function loadReplies(topicId){
 
-   <div class="post">
+  const container =
+  document
+  .getElementById("replies");
 
-    <div class="user">
 
-     <div class="avatar">
-      ${safe(
-       topic.username[0] || "?"
-      )}
-     </div>
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .from("replies")
+  .select("*")
+  .eq("topic_id",topicId)
+  .order(
+    "created_at",
+    {ascending:true}
+  );
 
-     <div>
 
-      <div class="username">
-       ${safe(topic.username)}
+  if(error){
+
+    console.error(error);
+
+    return;
+  }
+
+
+  if(!data || !data.length){
+
+    container.innerHTML =
+
+    `<div class="empty">
+      Todavía no hay respuestas.
+    </div>`;
+
+    return;
+  }
+
+
+  container.innerHTML =
+
+  data.map(reply => `
+
+    <div class="reply">
+
+      <div class="reply-user">
+        ${escapeHTML(reply.username)}
       </div>
 
-      <div class="date">
-       ${new Date(
-        topic.created_at
-       ).toLocaleString()}
+      <div class="reply-date">
+        ${new Date(
+          reply.created_at
+        ).toLocaleString()}
       </div>
 
-     </div>
+      <div class="reply-body">
+        ${escapeHTML(reply.body)}
+      </div>
 
     </div>
 
-
-    <h2>
-     ${safe(topic.title)}
-    </h2>
-
-
-    <p>
-     ${safe(topic.body)}
-    </p>
-
-   </div>
-
-
-   ${repliesHTML}
-
-  </div>
-
-
-  <div
-   class="composer"
-   style="display:block"
-  >
-
-   <input
-    id="replyUsername"
-    placeholder="Tu nombre"
-   >
-
-   <textarea
-    id="replyBody"
-    placeholder="Escribe una respuesta..."
-   ></textarea>
-
-   <button
-    class="button"
-    onclick="sendReply(${id})"
-   >
-    Responder
-   </button>
-
-  </div>
-
- `;
-
+  `).join("");
 }
 
 
-/*
-========================================
-CREAR TEMA
-========================================
-*/
+async function sendReply(){
 
-async function createTopic(){
+  if(!currentUser){
 
- const username =
- document
- .getElementById(
-  "username"
- )
- .value
- .trim();
+    showMessage(
+      "Primero debes crear un perfil."
+    );
 
+    showProfile();
 
- const title =
- document
- .getElementById(
-  "topicTitle"
- )
- .value
- .trim();
-
-
- const body =
- document
- .getElementById(
-  "topicBody"
- )
- .value
- .trim();
-
-
- if(
-  !username ||
-  !title ||
-  !body
- ){
-
-  alert(
-   "Completa todos los campos."
-  );
-
-  return;
-
- }
-
-
- const {
-  error
- } =
- await supabase
- .from("topics")
- .insert({
-
-  category:
-   currentCategory ||
-   "Off-topic",
-
-  title:
-   title,
-
-  body:
-   body,
-
-  username:
-   username
-
- });
-
-
- if(error){
-
-  console.error(error);
-
-  alert(
-   "No se pudo publicar."
-  );
-
-  return;
-
- }
-
-
- document
- .getElementById(
-  "topicTitle"
- ).value = "";
-
-
- document
- .getElementById(
-  "topicBody"
- ).value = "";
-
-
- document
- .getElementById(
-  "composer"
- ).style.display =
- "none";
-
-
- loadTopics(
-  currentCategory
- );
-
-}
-
-
-/*
-========================================
-RESPONDER
-========================================
-*/
-
-async function sendReply(
- topicId
-){
-
- const username =
- document
- .getElementById(
-  "replyUsername"
- )
- .value
- .trim();
-
-
- const body =
- document
- .getElementById(
-  "replyBody"
- )
- .value
- .trim();
-
-
- if(
-  !username ||
-  !body
- ){
-
-  alert(
-   "Completa todos los campos."
-  );
-
-  return;
-
- }
-
-
- const {
-  error
- } =
- await supabase
- .from("replies")
- .insert({
-
-  topic_id:
-   topicId,
-
-  username:
-   username,
-
-  body:
-   body
-
- });
-
-
- if(error){
-
-  console.error(error);
-
-  alert(
-   "No se pudo enviar la respuesta."
-  );
-
-  return;
-
- }
-
-
- openTopic(
-  topicId
- );
-
-}
-
-
-/*
-========================================
-BOTÓN NUEVO
-========================================
-*/
-
-document
- .getElementById(
-  "newTopic"
- )
- .onclick = () => {
-
- const composer =
- document.getElementById(
-  "composer"
- );
-
-
- composer.style.display =
- composer.style.display ===
- "block"
-  ? "none"
-  : "block";
-
-};
-
-
-/*
-========================================
-BUSCADOR
-========================================
-*/
-
-document
- .getElementById(
-  "search"
- )
- .addEventListener(
-  "input",
-  event => {
-
-   loadTopics(
-    currentCategory,
-    event.target.value
-   );
-
+    return;
   }
- );
+
+
+  const textarea =
+  document
+  .getElementById("replyBody");
+
+
+  const body =
+  textarea
+  .value
+  .trim();
+
+
+  if(!body){
+
+    showMessage(
+      "Escribe una respuesta."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("replies")
+  .insert({
+
+    topic_id:currentTopic,
+
+    body:body,
+
+    username:currentUser
+
+  });
+
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      "No se pudo publicar la respuesta."
+    );
+
+    return;
+  }
+
+
+  textarea.value="";
+
+  await loadReplies(
+    currentTopic
+  );
+}
 
 
 /*
-========================================
-VOLVER
-========================================
-*/
-
-document
- .getElementById(
-  "back"
- )
- .onclick = () => {
-
-  location.reload();
-
- };
-
-
-/*
-========================================
+====================================================
 TIEMPO REAL
-========================================
+
+Cuando alguien crea un hilo o responde,
+los demás usuarios pueden recibirlo sin
+tener que recargar la página.
+====================================================
 */
 
-supabase
- .channel("forum")
- .on(
+supabaseClient
+.channel("forum-topics")
+
+.on(
   "postgres_changes",
   {
-   event:"INSERT",
-   schema:"public",
-   table:"topics"
+    event:"INSERT",
+    schema:"public",
+    table:"topics"
   },
-  () => {
 
-   loadTopics(
-    currentCategory
-   );
+  payload => {
+
+    topics.unshift(
+      payload.new
+    );
+
+    renderTopics();
 
   }
- )
- .subscribe();
+
+)
+
+.subscribe();
+
+
+supabaseClient
+.channel("forum-replies")
+
+.on(
+  "postgres_changes",
+  {
+    event:"INSERT",
+    schema:"public",
+    table:"replies"
+  },
+
+  payload => {
+
+    if(
+      currentTopic &&
+      payload.new.topic_id === currentTopic
+    ){
+
+      loadReplies(
+        currentTopic
+      );
+
+    }
+
+  }
+
+)
+
+.subscribe();
 
 
 /*
-========================================
-INICIAR
-========================================
+====================================================
+ARRANCAR
+====================================================
 */
 
-loadTopics();
+goHome();
 
 </script>
 

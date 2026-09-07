@@ -2,288 +2,872 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>iPod Community</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-  background:linear-gradient(#dfe3e8,#b7bdc5);
-  color:#111;
+/* =========================================================
+   iOS 6 / iPod touch inspired UI
+   ========================================================= */
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
 }
-#app{
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  color:#222;
+}
+
+body{
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #d9d9d9 0px,
+      #d9d9d9 1px,
+      #d2d2d2 1px,
+      #d2d2d2 2px
+    );
+}
+
+/* DEVICE */
+
+#device{
+  width:100%;
   max-width:430px;
   min-height:100vh;
   margin:auto;
-  background:#f4f4f4;
-  box-shadow:0 0 35px #555;
+  background:#cfd2d5;
   position:relative;
+  overflow:hidden;
+  box-shadow:
+    0 0 35px rgba(0,0,0,.45),
+    inset 0 0 20px rgba(255,255,255,.5);
 }
-.status{
-  height:22px;
-  background:#111;
+
+/* STATUS BAR */
+
+.statusbar{
+  height:20px;
+  background:
+    linear-gradient(
+      #4b4b4b,
+      #111
+    );
   color:white;
   font-size:11px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 8px;
+  padding:0 7px;
+  text-shadow:0 -1px #000;
 }
+
+.status-left{
+  font-weight:bold;
+}
+
+.status-right{
+  display:flex;
+  gap:7px;
+}
+
+/* NAVIGATION BAR */
+
 .navbar{
-  height:46px;
-  background:linear-gradient(#fafafa,#cfd2d5);
+  height:45px;
+  position:relative;
+  z-index:20;
+
+  background:
+    linear-gradient(
+      #f8f8f8 0%,
+      #e9e9e9 48%,
+      #c8c8c8 52%,
+      #dedede 100%
+    );
+
+  border-top:1px solid #fff;
   border-bottom:1px solid #777;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:5px;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
-.navtitle{
-  font-size:20px;
-  font-weight:bold;
-  text-shadow:0 1px white;
-}
-button,.button{
-  border:1px solid #777;
-  border-radius:7px;
-  background:linear-gradient(#fff,#c8c8c8);
-  padding:7px 11px;
-  font-weight:bold;
-  color:#111;
-  box-shadow:0 1px 2px #888;
-  cursor:pointer;
-}
-button:active{transform:scale(.97)}
-.blue{
-  background:linear-gradient(#64b8ff,#147bd1);
-  color:white;
-  border-color:#075da8;
-  text-shadow:0 -1px #245;
-}
-.screen{padding-bottom:70px}
-.list{
-  background:white;
-  border-top:1px solid #aaa;
-  border-bottom:1px solid #aaa;
-}
-.row{
-  min-height:55px;
-  padding:9px 12px;
-  border-bottom:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  cursor:pointer;
-}
-.row:last-child{border-bottom:0}
-.row:active{background:#ddd}
-.icon{
-  width:38px;height:38px;
-  border-radius:9px;
-  background:linear-gradient(#eee,#aaa);
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.9),
+    0 1px 2px rgba(0,0,0,.35);
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:22px;
-  flex-shrink:0;
 }
-.arrow{
-  margin-left:auto;
-  color:#888;
-  font-size:25px;
-}
-.small{font-size:12px;color:#666}
-.muted{color:#777}
-.center{text-align:center;padding:30px 15px}
-.card{
-  margin:12px;
-  background:white;
-  border:1px solid #aaa;
-  border-radius:9px;
-  box-shadow:0 1px 3px #aaa;
-  overflow:hidden;
-}
-.cardhead{
-  background:linear-gradient(#fff,#ddd);
-  padding:10px;
+
+.nav-title{
+  font-size:20px;
   font-weight:bold;
-  border-bottom:1px solid #aaa;
+  color:#222;
+  text-shadow:
+    0 1px #fff,
+    0 -1px rgba(0,0,0,.15);
 }
-.cardbody{padding:12px}
-input,textarea,select{
-  width:100%;
-  padding:10px;
-  border:1px solid #999;
-  border-radius:6px;
-  background:white;
-  margin:5px 0 10px;
-  font:inherit;
-}
-textarea{min-height:110px;resize:vertical}
-label{
+
+.nav-button{
+  position:absolute;
+  top:7px;
+  height:31px;
+  padding:0 10px;
+
+  color:#fff;
   font-size:13px;
   font-weight:bold;
+
+  border:1px solid #333;
+  border-radius:5px;
+
+  background:
+    linear-gradient(
+      #777,
+      #444 48%,
+      #222 52%,
+      #555
+    );
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.4),
+    0 1px 1px rgba(0,0,0,.5);
+
+  text-shadow:0 -1px #000;
 }
-.profile{
-  padding:20px;
+
+.nav-button:active{
+  background:linear-gradient(#222,#555);
+}
+
+.nav-left{
+  left:6px;
+}
+
+.nav-right{
+  right:6px;
+}
+
+/* CONTENT */
+
+#screen{
+  min-height:calc(100vh - 116px);
+  padding-bottom:65px;
+
+  background:
+    linear-gradient(
+      rgba(255,255,255,.45),
+      rgba(255,255,255,.45)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      #d8d8d8 0px,
+      #d8d8d8 2px,
+      #d2d2d2 2px,
+      #d2d2d2 4px
+    );
+}
+
+/* HOME HEADER */
+
+.home-header{
   text-align:center;
-  background:linear-gradient(#fafafa,#ddd);
+  padding:25px 15px 20px;
+
+  background:
+    linear-gradient(
+      #eeeeee,
+      #d0d0d0
+    );
+
+  border-bottom:1px solid #999;
+
+  box-shadow:
+    inset 0 1px white;
+}
+
+.ipod-icon{
+  width:86px;
+  height:86px;
+  margin:auto;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8f8f8,
+      #aaa
+    );
+
+  border:2px solid #777;
+
+  box-shadow:
+    inset 0 2px white,
+    0 2px 5px rgba(0,0,0,.5);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:43px;
+}
+
+.home-title{
+  font-size:25px;
+  font-weight:bold;
+  margin-top:12px;
+  text-shadow:0 1px white;
+}
+
+.home-subtitle{
+  color:#555;
+  font-size:13px;
+  margin-top:4px;
+}
+
+/* LISTS */
+
+.list{
+  background:#fff;
+  border-top:1px solid #aaa;
+  border-bottom:1px solid #888;
+
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.2);
+}
+
+.list-title{
+  padding:6px 12px;
+
+  font-size:12px;
+  font-weight:bold;
+  color:#555;
+  text-shadow:0 1px white;
+
+  background:
+    linear-gradient(
+      #eeeeee,
+      #c7c7c7
+    );
+
+  border-top:1px solid white;
+  border-bottom:1px solid #999;
+}
+
+.row{
+  min-height:57px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+
+  padding:7px 12px;
+
+  background:
+    linear-gradient(
+      #fff,
+      #f2f2f2
+    );
+
+  border-bottom:1px solid #c8c8c8;
+
+  position:relative;
+}
+
+.row:last-child{
+  border-bottom:0;
+}
+
+.row:active{
+  background:#d9d9d9;
+}
+
+.row-icon{
+  width:40px;
+  height:40px;
+
+  flex:none;
+
+  border-radius:9px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:23px;
+
+  background:
+    linear-gradient(
+      #fafafa,
+      #aaa
+    );
+
+  border:1px solid #777;
+
+  box-shadow:
+    inset 0 1px white,
+    0 1px 2px rgba(0,0,0,.4);
+}
+
+.row-content{
+  min-width:0;
+  flex:1;
+}
+
+.row-title{
+  font-size:16px;
+  font-weight:bold;
+  color:#222;
+}
+
+.row-subtitle{
+  margin-top:2px;
+  font-size:12px;
+  color:#777;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chevron{
+  color:#999;
+  font-size:27px;
+  font-weight:normal;
+}
+
+/* BUTTON */
+
+.ios-button{
+  height:36px;
+  padding:0 14px;
+
+  border-radius:6px;
+
+  border:1px solid #315d8b;
+
+  background:
+    linear-gradient(
+      #75b9ed,
+      #3c82bd 48%,
+      #21659c 52%,
+      #4b91c8
+    );
+
+  color:white;
+
+  font-size:14px;
+  font-weight:bold;
+
+  text-shadow:
+    0 -1px #24557c;
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.7),
+    0 1px 2px rgba(0,0,0,.45);
+}
+
+.ios-button:active{
+  background:
+    linear-gradient(
+      #21659c,
+      #75b9ed
+    );
+}
+
+.gray-button{
+  border-color:#777;
+  color:#222;
+  text-shadow:0 1px white;
+
+  background:
+    linear-gradient(
+      #fff,
+      #d2d2d2
+    );
+}
+
+/* PANELS */
+
+.panel{
+  margin:12px;
+
+  background:#fff;
+
+  border:1px solid #999;
+  border-radius:7px;
+
+  box-shadow:
+    0 1px 3px rgba(0,0,0,.35);
+
+  overflow:hidden;
+}
+
+.panel-title{
+  padding:9px 11px;
+
+  font-size:15px;
+  font-weight:bold;
+
+  background:
+    linear-gradient(
+      #f9f9f9,
+      #d0d0d0
+    );
+
   border-bottom:1px solid #aaa;
+
+  text-shadow:0 1px white;
 }
+
+.panel-body{
+  padding:12px;
+}
+
+/* FORUM */
+
+.forum-post{
+  background:white;
+  border-bottom:1px solid #bbb;
+  padding:12px;
+}
+
+.forum-user{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:9px;
+}
+
+.forum-user-name{
+  font-weight:bold;
+  color:#222;
+}
+
+.forum-body{
+  font-size:15px;
+  line-height:1.45;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.forum-meta{
+  font-size:11px;
+  color:#888;
+  margin-top:5px;
+}
+
+/* AVATAR */
+
 .avatar{
-  width:105px;
-  height:105px;
-  border-radius:22px;
+  width:82px;
+  height:82px;
+
+  border-radius:17px;
+
   object-fit:cover;
-  border:3px solid white;
-  box-shadow:0 2px 7px #777;
-  background:#bbb;
-}
-.avatar.smallAvatar{
-  width:44px;height:44px;border-radius:10px;
+
+  background:#aaa;
+
   border:2px solid white;
+
+  box-shadow:
+    0 1px 4px rgba(0,0,0,.5);
 }
-.username{
+
+.avatar-small{
+  width:43px;
+  height:43px;
+  border-radius:9px;
+}
+
+/* PROFILE */
+
+.profile-header{
+  text-align:center;
+  padding:22px 15px;
+
+  background:
+    linear-gradient(
+      #f4f4f4,
+      #cfcfcf
+    );
+
+  border-bottom:1px solid #999;
+
+  box-shadow:
+    inset 0 1px white;
+}
+
+.profile-name{
+  margin-top:9px;
   font-size:22px;
   font-weight:bold;
-  margin-top:8px;
+  text-shadow:0 1px white;
 }
-.bio{
-  margin-top:5px;
+
+.profile-bio{
+  margin:5px auto 0;
+  max-width:340px;
+  font-size:13px;
   color:#555;
   white-space:pre-wrap;
 }
-.toolbar{
+
+/* FORMS */
+
+.form{
+  padding:12px;
+}
+
+label{
+  display:block;
+  margin:7px 2px 4px;
+
+  font-size:13px;
+  font-weight:bold;
+  color:#444;
+
+  text-shadow:0 1px white;
+}
+
+input,
+textarea,
+select{
+  width:100%;
+
+  border:1px solid #888;
+  border-radius:5px;
+
+  background:#fff;
+
+  padding:9px;
+
+  font-family:inherit;
+  font-size:15px;
+
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,.15);
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.form-buttons{
   display:flex;
   gap:8px;
-  padding:10px;
+  margin-top:12px;
 }
-.toolbar button{flex:1}
-.hidden{display:none!important}
+
+.form-buttons button{
+  flex:1;
+}
+
+/* MESSAGE */
+
 .message{
   padding:10px 12px;
   border-bottom:1px solid #ccc;
+  background:#fff;
 }
+
 .message.me{
-  background:#e8f4ff;
+  background:#e5f1fc;
 }
-.bottom{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  max-width:430px;
-  height:57px;
-  background:linear-gradient(#eee,#bbb);
-  border-top:1px solid #777;
-  display:flex;
-  z-index:10;
+
+.message-name{
+  font-size:13px;
+  font-weight:bold;
 }
-.bottom button{
-  flex:1;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  box-shadow:none;
-  font-size:11px;
+
+.message-body{
+  margin-top:3px;
+  font-size:14px;
+  white-space:pre-wrap;
+  word-break:break-word;
 }
-.bottom button span{
-  display:block;
-  font-size:22px;
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  padding:45px 20px;
+  color:#666;
 }
-.error{
-  margin:10px;
-  padding:10px;
-  background:#ffdede;
-  border:1px solid #d88;
-  border-radius:7px;
-  color:#900;
-}
-.success{
-  margin:10px;
-  padding:10px;
-  background:#e1ffe1;
-  border:1px solid #8b8;
-  border-radius:7px;
-  color:#174d17;
-}
-.topicTitle{font-size:20px;font-weight:bold}
-.post{
-  padding:12px;
-  border-bottom:1px solid #ccc;
-}
-.postUser{
-  display:flex;
-  align-items:center;
-  gap:8px;
+
+.empty-icon{
+  font-size:55px;
   margin-bottom:8px;
 }
-a{color:#06c}
+
+.empty-title{
+  font-size:19px;
+  font-weight:bold;
+  color:#444;
+}
+
+/* ALERTS */
+
+.alert{
+  margin:10px;
+  padding:10px;
+
+  border-radius:6px;
+
+  border:1px solid #999;
+
+  background:#eee;
+
+  font-size:13px;
+}
+
+.alert.error{
+  background:#ffe0e0;
+  border-color:#cc8888;
+  color:#8b0000;
+}
+
+.alert.success{
+  background:#e2f6e2;
+  border-color:#8ab58a;
+  color:#275d27;
+}
+
+/* BOTTOM TAB BAR */
+
+.tabbar{
+  position:fixed;
+  bottom:0;
+
+  width:100%;
+  max-width:430px;
+
+  height:51px;
+
+  z-index:50;
+
+  display:flex;
+
+  background:
+    linear-gradient(
+      #505050,
+      #252525
+    );
+
+  border-top:1px solid #111;
+
+  box-shadow:
+    0 -1px 4px rgba(0,0,0,.5);
+}
+
+.tab{
+  flex:1;
+
+  color:#ddd;
+
+  border:0;
+  border-radius:0;
+
+  background:transparent;
+
+  font-size:10px;
+  font-weight:bold;
+
+  text-shadow:0 -1px black;
+}
+
+.tab-icon{
+  font-size:21px;
+  display:block;
+  line-height:22px;
+}
+
+.tab.active{
+  color:#fff;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.center{
+  text-align:center;
+}
+
+.spacer{
+  height:10px;
+}
+
+.small-text{
+  font-size:12px;
+  color:#777;
+}
+
+hr{
+  border:0;
+  border-top:1px solid #ccc;
+}
+
+/* IOS STYLE SECTION HEADER */
+
+.section-header{
+  padding:5px 12px;
+
+  font-size:12px;
+  font-weight:bold;
+
+  color:#555;
+
+  background:
+    linear-gradient(
+      #e9e9e9,
+      #c8c8c8
+    );
+
+  border-top:1px solid white;
+  border-bottom:1px solid #999;
+
+  text-shadow:0 1px white;
+}
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<div id="device">
 
-  <div class="status">
-    <span>iPod</span>
-    <span>Wi-Fi　🔋</span>
+  <div class="statusbar">
+    <div class="status-left">iPod</div>
+    <div class="status-right">
+      <span>Wi-Fi</span>
+      <span>▰</span>
+      <span>100%</span>
+    </div>
   </div>
 
   <div class="navbar">
-    <button id="backBtn" class="hidden" onclick="goBack()">‹ Atrás</button>
-    <div id="navTitle" class="navtitle">iPod Community</div>
-    <button id="navAction" class="hidden"></button>
+
+    <button
+      id="backButton"
+      class="nav-button nav-left hidden"
+      onclick="goBack()">
+      ‹ Atrás
+    </button>
+
+    <div
+      id="navTitle"
+      class="nav-title">
+      iPod Community
+    </div>
+
+    <button
+      id="navAction"
+      class="nav-button nav-right hidden">
+    </button>
+
   </div>
 
-  <div id="screen" class="screen"></div>
+  <main id="screen"></main>
 
-  <div class="bottom">
-    <button onclick="showHome()"><span>🏠</span>Inicio</button>
-    <button onclick="showForums()"><span>🗂️</span>Foros</button>
-    <button onclick="showMessages()"><span>💬</span>Mensajes</button>
-    <button onclick="showProfile()"><span>👤</span>Perfil</button>
+  <div class="tabbar">
+
+    <button
+      id="tabHome"
+      class="tab active"
+      onclick="showHome()">
+      <span class="tab-icon">⌂</span>
+      Inicio
+    </button>
+
+    <button
+      id="tabForums"
+      class="tab"
+      onclick="showForums()">
+      <span class="tab-icon">▤</span>
+      Foros
+    </button>
+
+    <button
+      id="tabMessages"
+      class="tab"
+      onclick="showMessages()">
+      <span class="tab-icon">●</span>
+      Mensajes
+    </button>
+
+    <button
+      id="tabProfile"
+      class="tab"
+      onclick="showProfile()">
+      <span class="tab-icon">●</span>
+      Perfil
+    </button>
+
   </div>
 
 </div>
 
+
 <script>
 /* =========================================================
-   CONFIGURACIÓN SUPABASE
+   SUPABASE
    ========================================================= */
 
-const SUPABASE_URL = "TU_SUPABASE_URL";
-const SUPABASE_KEY = "TU_SUPABASE_PUBLISHABLE_KEY";
+const SUPABASE_URL =
+  "TU_SUPABASE_URL";
 
-const sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const SUPABASE_KEY =
+  "TU_SUPABASE_PUBLISHABLE_KEY";
+
+const db =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
 
 let currentUser = null;
 let currentProfile = null;
-let currentView = "home";
-let historyStack = [];
+let currentPage = "home";
+let previousPage = "home";
+
+const screen =
+  document.getElementById("screen");
+
+const navTitle =
+  document.getElementById("navTitle");
+
+const backButton =
+  document.getElementById("backButton");
+
+const navAction =
+  document.getElementById("navAction");
 
 
 /* =========================================================
-   UTILIDADES
+   HELPERS
    ========================================================= */
 
-const screen = document.getElementById("screen");
-const navTitle = document.getElementById("navTitle");
-const backBtn = document.getElementById("backBtn");
-const navAction = document.getElementById("navAction");
-
 function esc(value){
-  if(value === null || value === undefined) return "";
+
+  if(value === null || value === undefined)
+    return "";
+
   return String(value)
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -292,153 +876,404 @@ function esc(value){
     .replaceAll("'","&#039;");
 }
 
-function avatar(url){
-  return url || "data:image/svg+xml," + encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-      <rect width="100%" height="100%" fill="#aaa"/>
-      <circle cx="100" cy="75" r="40" fill="#ddd"/>
-      <circle cx="100" cy="180" r="70" fill="#ddd"/>
-    </svg>
-  `);
+
+function defaultAvatar(){
+
+  return "data:image/svg+xml," +
+    encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="200"
+           height="200"
+           viewBox="0 0 200 200">
+
+        <defs>
+          <linearGradient id="g"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1">
+            <stop offset="0"
+                  stop-color="#eee"/>
+            <stop offset="1"
+                  stop-color="#aaa"/>
+          </linearGradient>
+        </defs>
+
+        <rect width="200"
+              height="200"
+              rx="35"
+              fill="url(#g)"/>
+
+        <circle
+          cx="100"
+          cy="72"
+          r="38"
+          fill="#777"/>
+
+        <path
+          d="M35 190
+             C40 140 65 120 100 120
+             C135 120 160 140 165 190Z"
+          fill="#777"/>
+
+      </svg>
+    `);
 }
+
+
+function getAvatar(url){
+  return url || defaultAvatar();
+}
+
 
 function setTitle(title){
   navTitle.textContent = title;
 }
 
-function setBack(show=true){
-  backBtn.classList.toggle("hidden",!show);
+
+function setBack(value){
+
+  backButton.classList.toggle(
+    "hidden",
+    !value
+  );
 }
 
-function message(text,type="error"){
-  return `<div class="${type}">${esc(text)}</div>`;
+
+function setAction(text,fn){
+
+  if(!text){
+
+    navAction.classList.add("hidden");
+    return;
+  }
+
+  navAction.classList.remove("hidden");
+  navAction.textContent=text;
+  navAction.onclick=fn;
+}
+
+
+function alertBox(text,type="error"){
+
+  return `
+    <div class="alert ${type}">
+      ${esc(text)}
+    </div>
+  `;
+}
+
+
+function setTab(active){
+
+  document.querySelectorAll(".tab")
+    .forEach(t=>t.classList.remove("active"));
+
+  const el =
+    document.getElementById("tab"+active);
+
+  if(el) el.classList.add("active");
 }
 
 
 /* =========================================================
-   PERFIL
+   SESSION
    ========================================================= */
+
+async function loadSession(){
+
+  const {data,error} =
+    await db.auth.getSession();
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  currentUser =
+    data.session?.user || null;
+
+  if(currentUser){
+
+    await ensureProfile();
+
+  }else{
+
+    currentProfile=null;
+  }
+}
+
 
 async function ensureProfile(){
 
-  if(!currentUser) return null;
+  if(!currentUser)
+    return null;
 
-  const {data,error} = await sb
-    .from("profiles")
-    .select("*")
-    .eq("id",currentUser.id)
-    .maybeSingle();
+  const {data,error} =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
 
   if(error){
+
     console.error(error);
     return null;
   }
 
   if(data){
+
     currentProfile=data;
     return data;
   }
 
+
   /*
-    Si el usuario acaba de confirmar su correo,
-    se crea automáticamente el perfil.
-  */
+   * Crea el perfil automáticamente
+   * después de iniciar sesión.
+   */
 
   const username =
     currentUser.user_metadata?.username ||
-    "Usuario" + currentUser.id.slice(0,6);
+    "Usuario" +
+    currentUser.id.slice(0,6);
 
-  const {data:newProfile,error:createError} = await sb
-    .from("profiles")
-    .insert({
-      id:currentUser.id,
-      username:username,
-      bio:"",
-      country:"",
-      website:"",
-      avatar_url:""
-    })
-    .select()
-    .single();
+
+  const {data:newProfile,error:createError} =
+    await db
+      .from("profiles")
+      .insert({
+
+        id:currentUser.id,
+
+        username,
+
+        bio:"",
+
+        age:null,
+
+        country:"",
+
+        website:"",
+
+        avatar_url:""
+
+      })
+      .select()
+      .single();
+
 
   if(createError){
+
     console.error(createError);
     return null;
   }
 
   currentProfile=newProfile;
+
   return newProfile;
 }
 
 
+db.auth.onAuthStateChange(
+  async(event,session)=>{
+
+    currentUser =
+      session?.user || null;
+
+    if(currentUser){
+
+      setTimeout(
+        ()=>ensureProfile(),
+        0
+      );
+
+    }else{
+
+      currentProfile=null;
+    }
+  }
+);
+
+
 /* =========================================================
-   INICIO
+   HOME
    ========================================================= */
 
 async function showHome(){
 
-  currentView="home";
+  previousPage=currentPage;
+  currentPage="home";
+
   setTitle("iPod Community");
   setBack(false);
-  navAction.classList.add("hidden");
+  setAction(null);
+  setTab("Home");
 
-  const userText = currentUser
-    ? `Sesión iniciada como ${esc(currentProfile?.username || "Usuario")}`
-    : "No has iniciado sesión.";
+  const account =
+    currentUser
+      ? `
+        <b>
+          ${esc(
+            currentProfile?.username ||
+            "Usuario"
+          )}
+        </b>
+
+        <div class="small-text">
+          Sesión iniciada
+        </div>
+      `
+      : `
+        <b>Visitante</b>
+
+        <div class="small-text">
+          No has iniciado sesión
+        </div>
+      `;
+
 
   screen.innerHTML=`
 
-    <div class="profile">
-      <div style="font-size:50px">🎵</div>
-      <div class="username">iPod Community</div>
-      <div class="bio">
-        Una comunidad con estética clásica de iPod touch.
+    <div class="home-header">
+
+      <div class="ipod-icon">
+        ♪
       </div>
+
+      <div class="home-title">
+        iPod Community
+      </div>
+
+      <div class="home-subtitle">
+        Tu comunidad con estilo clásico.
+      </div>
+
     </div>
 
-    <div class="card">
-      <div class="cardhead">Cuenta</div>
-      <div class="cardbody">
-        ${userText}
-        <br><br>
-        ${
-          currentUser
-          ? `<button class="blue" onclick="showProfile()">Ver mi perfil</button>
-             <button onclick="logout()">Cerrar sesión</button>`
-          : `<button class="blue" onclick="showLogin()">Iniciar sesión</button>
-             <button onclick="showRegister()">Crear cuenta</button>`
-        }
-      </div>
+
+    <div class="section-header">
+      CUENTA
     </div>
 
     <div class="list">
-      <div class="row" onclick="showForums()">
-        <div class="icon">🗂️</div>
-        <div>
-          <b>Foros</b>
-          <div class="small">Habla con la comunidad</div>
+
+      <div class="row"
+           onclick="${
+             currentUser
+               ? "showProfile()"
+               : "showLogin()"
+           }">
+
+        <div class="row-icon">
+          ${
+            currentUser
+              ? "👤"
+              : "🔐"
+          }
         </div>
-        <div class="arrow">›</div>
+
+        <div class="row-content">
+
+          <div class="row-title">
+            ${currentUser
+              ? "Mi perfil"
+              : "Iniciar sesión"}
+          </div>
+
+          <div class="row-subtitle">
+            ${account}
+          </div>
+
+        </div>
+
+        <div class="chevron">›</div>
+
       </div>
 
-      <div class="row" onclick="showMessages()">
-        <div class="icon">💬</div>
-        <div>
-          <b>Mensajes</b>
-          <div class="small">Mensajes privados</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
-
-      <div class="row" onclick="showUsers()">
-        <div class="icon">👥</div>
-        <div>
-          <b>Usuarios</b>
-          <div class="small">Ver perfiles de la comunidad</div>
-        </div>
-        <div class="arrow">›</div>
-      </div>
     </div>
+
+
+    <div class="section-header">
+      COMUNIDAD
+    </div>
+
+    <div class="list">
+
+      <div class="row"
+           onclick="showForums()">
+
+        <div class="row-icon">
+          🗂
+        </div>
+
+        <div class="row-content">
+
+          <div class="row-title">
+            Foros
+          </div>
+
+          <div class="row-subtitle">
+            Crea y participa en conversaciones
+          </div>
+
+        </div>
+
+        <div class="chevron">›</div>
+
+      </div>
+
+
+      <div class="row"
+           onclick="showMessages()">
+
+        <div class="row-icon">
+          💬
+        </div>
+
+        <div class="row-content">
+
+          <div class="row-title">
+            Mensajes
+          </div>
+
+          <div class="row-subtitle">
+            Envía mensajes privados
+          </div>
+
+        </div>
+
+        <div class="chevron">›</div>
+
+      </div>
+
+
+      <div class="row"
+           onclick="showUsers()">
+
+        <div class="row-icon">
+          👥
+        </div>
+
+        <div class="row-content">
+
+          <div class="row-title">
+            Usuarios
+          </div>
+
+          <div class="row-subtitle">
+            Conoce a otros miembros
+          </div>
+
+        </div>
+
+        <div class="chevron">›</div>
+
+      </div>
+
+    </div>
+
   `;
 }
 
@@ -449,135 +1284,272 @@ async function showHome(){
 
 function showLogin(){
 
-  currentView="login";
+  previousPage=currentPage;
+  currentPage="login";
+
   setTitle("Iniciar sesión");
   setBack(true);
+  setAction(null);
 
   screen.innerHTML=`
 
-    <div class="card">
-      <div class="cardhead">Cuenta</div>
+    <div class="panel">
 
-      <div class="cardbody">
+      <div class="panel-title">
+        Iniciar sesión
+      </div>
+
+      <div class="form">
 
         <label>Email</label>
-        <input id="loginEmail" type="email">
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="correo@ejemplo.com">
+
 
         <label>Contraseña</label>
-        <input id="loginPassword" type="password">
 
-        <button class="blue" onclick="login()">
-          Iniciar sesión
-        </button>
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Contraseña">
 
-        <button onclick="showRegister()">
-          Crear una cuenta
-        </button>
 
-        <div id="loginMsg"></div>
+        <div class="form-buttons">
+
+          <button
+            class="ios-button"
+            onclick="login()">
+            Entrar
+          </button>
+
+          <button
+            class="ios-button gray-button"
+            onclick="showRegister()">
+            Crear cuenta
+          </button>
+
+        </div>
+
+        <div id="loginMessage"></div>
 
       </div>
+
     </div>
+
   `;
 }
 
+
 async function login(){
 
-  const email=document.getElementById("loginEmail").value.trim();
-  const password=document.getElementById("loginPassword").value;
+  const email =
+    document.getElementById(
+      "loginEmail"
+    ).value.trim();
 
-  const msg=document.getElementById("loginMsg");
+  const password =
+    document.getElementById(
+      "loginPassword"
+    ).value;
+
+  const output =
+    document.getElementById(
+      "loginMessage"
+    );
+
 
   if(!email || !password){
-    msg.innerHTML=message("Completa todos los campos.");
+
+    output.innerHTML =
+      alertBox(
+        "Completa todos los campos."
+      );
+
     return;
   }
 
-  const {error}=await sb.auth.signInWithPassword({
-    email,
-    password
-  });
+
+  const {error} =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
 
-  await refreshSession();
+
+  await loadSession();
+
   showHome();
 }
 
 
 /* =========================================================
-   REGISTRO
+   REGISTER
    ========================================================= */
 
 function showRegister(){
 
-  currentView="register";
+  previousPage=currentPage;
+  currentPage="register";
+
   setTitle("Crear cuenta");
   setBack(true);
+  setAction(null);
 
   screen.innerHTML=`
 
-    <div class="card">
-      <div class="cardhead">Nueva cuenta</div>
+    <div class="panel">
 
-      <div class="cardbody">
+      <div class="panel-title">
+        Crear una cuenta
+      </div>
 
-        <label>Nombre de usuario</label>
-        <input id="regUsername" maxlength="30">
+      <div class="form">
+
+        <label>
+          Nombre de usuario
+        </label>
+
+        <input
+          id="registerUsername"
+          maxlength="30"
+          placeholder="Tu nombre">
+
 
         <label>Email</label>
-        <input id="regEmail" type="email">
+
+        <input
+          id="registerEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="correo@ejemplo.com">
+
 
         <label>Contraseña</label>
-        <input id="regPassword" type="password">
 
-        <button class="blue" onclick="register()">
-          Crear cuenta
-        </button>
+        <input
+          id="registerPassword"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Mínimo 6 caracteres">
 
-        <div id="registerMsg"></div>
+
+        <div class="form-buttons">
+
+          <button
+            class="ios-button"
+            onclick="register()">
+            Registrarme
+          </button>
+
+          <button
+            class="ios-button gray-button"
+            onclick="showLogin()">
+            Ya tengo cuenta
+          </button>
+
+        </div>
+
+        <div id="registerMessage"></div>
 
       </div>
+
     </div>
+
   `;
 }
 
+
 async function register(){
 
-  const username=document.getElementById("regUsername").value.trim();
-  const email=document.getElementById("regEmail").value.trim();
-  const password=document.getElementById("regPassword").value;
+  const username =
+    document.getElementById(
+      "registerUsername"
+    ).value.trim();
 
-  const msg=document.getElementById("registerMsg");
+  const email =
+    document.getElementById(
+      "registerEmail"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "registerPassword"
+    ).value;
+
+  const output =
+    document.getElementById(
+      "registerMessage"
+    );
+
 
   if(username.length < 3){
-    msg.innerHTML=message("El nombre debe tener al menos 3 caracteres.");
+
+    output.innerHTML =
+      alertBox(
+        "El nombre debe tener al menos 3 caracteres."
+      );
+
     return;
   }
+
 
   if(password.length < 6){
-    msg.innerHTML=message("La contraseña debe tener al menos 6 caracteres.");
+
+    output.innerHTML =
+      alertBox(
+        "La contraseña debe tener al menos 6 caracteres."
+      );
+
     return;
   }
 
-  const {data,error}=await sb.auth.signUp({
-    email,
-    password,
-    options:{
-      data:{
-        username:username
-      },
-      emailRedirectTo:window.location.href
-    }
-  });
+
+  const {data,error} =
+    await db.auth.signUp({
+
+      email,
+
+      password,
+
+      options:{
+        data:{
+          username
+        },
+
+        emailRedirectTo:
+          window.location.href
+      }
+
+    });
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
+
+
+  /*
+   * Si Supabase no exige confirmación
+   * del email, tendremos sesión inmediatamente.
+   */
 
   if(data.session){
 
@@ -585,19 +1557,24 @@ async function register(){
 
     await ensureProfile();
 
-    msg.innerHTML=message(
-      "Cuenta creada correctamente.",
-      "success"
-    );
+    output.innerHTML =
+      alertBox(
+        "Cuenta creada correctamente.",
+        "success"
+      );
 
-    setTimeout(showHome,800);
+    setTimeout(
+      showHome,
+      800
+    );
 
   }else{
 
-    msg.innerHTML=message(
-      "Cuenta creada. Revisa tu email para confirmar la cuenta.",
-      "success"
-    );
+    output.innerHTML =
+      alertBox(
+        "Cuenta creada. Revisa tu correo para confirmar la cuenta.",
+        "success"
+      );
   }
 }
 
@@ -608,7 +1585,7 @@ async function register(){
 
 async function logout(){
 
-  await sb.auth.signOut();
+  await db.auth.signOut();
 
   currentUser=null;
   currentProfile=null;
@@ -618,698 +1595,1171 @@ async function logout(){
 
 
 /* =========================================================
-   PERFIL
+   PROFILE
    ========================================================= */
 
 async function showProfile(){
 
   if(!currentUser){
+
     showLogin();
     return;
   }
 
   await ensureProfile();
 
-  currentView="profile";
+  previousPage=currentPage;
+  currentPage="profile";
+
   setTitle("Mi perfil");
   setBack(false);
+  setTab("Profile");
+
+  setAction(
+    "Editar",
+    editProfile
+  );
+
 
   const p=currentProfile;
 
+
   screen.innerHTML=`
 
-    <div class="profile">
+    <div class="profile-header">
 
       <img
-        id="profileAvatar"
         class="avatar"
-        src="${avatar(p?.avatar_url)}"
-      >
+        src="${getAvatar(p?.avatar_url)}">
 
-      <div class="username">
+      <div class="profile-name">
         ${esc(p?.username)}
       </div>
 
-      <div class="bio">
-        ${esc(p?.bio || "Sin descripción.")}
+      <div class="profile-bio">
+        ${
+          esc(
+            p?.bio ||
+            "Sin descripción."
+          )
+        }
       </div>
 
     </div>
 
-    <div class="card">
 
-      <div class="cardhead">
-        Información
+    <div class="section-header">
+      INFORMACIÓN
+    </div>
+
+    <div class="list">
+
+      <div class="row">
+
+        <div class="row-content">
+
+          <div class="row-title">
+            País
+          </div>
+
+          <div class="row-subtitle">
+            ${esc(
+              p?.country ||
+              "No especificado"
+            )}
+          </div>
+
+        </div>
+
       </div>
 
-      <div class="cardbody">
 
-        <b>País</b>
-        <div>${esc(p?.country || "No especificado")}</div>
-        <br>
+      <div class="row">
 
-        <b>Edad</b>
-        <div>${p?.age || "No especificada"}</div>
-        <br>
+        <div class="row-content">
 
-        <b>Web</b>
-        <div>${esc(p?.website || "No especificada")}</div>
+          <div class="row-title">
+            Edad
+          </div>
+
+          <div class="row-subtitle">
+            ${
+              p?.age ||
+              "No especificada"
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div class="row-content">
+
+          <div class="row-title">
+            Página web
+          </div>
+
+          <div class="row-subtitle">
+            ${
+              esc(
+                p?.website ||
+                "No especificada"
+              )
+            }
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-    <div class="toolbar">
-      <button class="blue" onclick="editProfile()">
-        Editar perfil
-      </button>
 
-      <button onclick="showUsers()">
-        Usuarios
-      </button>
+    <div class="panel">
+
+      <div class="panel-body center">
+
+        <button
+          class="ios-button"
+          onclick="logout()">
+          Cerrar sesión
+        </button>
+
+      </div>
+
     </div>
+
   `;
 }
 
 
 /* =========================================================
-   EDITAR PERFIL
+   EDIT PROFILE
    ========================================================= */
 
 function editProfile(){
 
+  if(!currentUser){
+
+    showLogin();
+    return;
+  }
+
+  currentPage="editProfile";
+
+  setTitle("Editar perfil");
+  setBack(true);
+  setAction(null);
+
+
   const p=currentProfile;
+
 
   screen.innerHTML=`
 
-    <div class="card">
+    <div class="panel">
 
-      <div class="cardhead">
-        Editar perfil
+      <div class="panel-title">
+        Información personal
       </div>
 
-      <div class="cardbody">
+      <div class="form">
 
-        <label>Foto de perfil</label>
+        <label>
+          Foto de perfil
+        </label>
+
+        <div class="center">
+
+          <img
+            id="avatarPreview"
+            class="avatar"
+            src="${getAvatar(p?.avatar_url)}">
+
+        </div>
+
         <input
           id="avatarFile"
           type="file"
-          accept="image/*"
-        >
+          accept="image/*">
 
-        <img
-          id="previewAvatar"
-          class="avatar"
-          src="${avatar(p.avatar_url)}"
-        >
 
-        <label>Nombre de usuario</label>
+        <label>
+          Nombre de usuario
+        </label>
+
         <input
           id="editUsername"
           maxlength="30"
-          value="${esc(p.username)}"
-        >
+          value="${esc(p?.username || "")}">
 
-        <label>Descripción</label>
-        <textarea id="editBio">${esc(p.bio)}</textarea>
 
-        <label>Edad</label>
+        <label>
+          Descripción
+        </label>
+
+        <textarea
+          id="editBio"
+          maxlength="1000">${esc(p?.bio || "")}</textarea>
+
+
+        <label>
+          Edad
+        </label>
+
         <input
           id="editAge"
           type="number"
           min="1"
           max="120"
-          value="${p.age || ""}"
-        >
+          value="${p?.age || ""}">
 
-        <label>País</label>
+
+        <label>
+          País
+        </label>
+
         <input
           id="editCountry"
-          value="${esc(p.country)}"
-        >
+          value="${esc(p?.country || "")}">
 
-        <label>Página web</label>
+
+        <label>
+          Página web
+        </label>
+
         <input
           id="editWebsite"
-          value="${esc(p.website)}"
-          placeholder="https://..."
-        >
+          value="${esc(p?.website || "")}"
+          placeholder="https://ejemplo.com">
 
-        <button
-          class="blue"
-          onclick="saveProfile()"
-        >
-          Guardar
-        </button>
 
-        <div id="profileMsg"></div>
+        <div class="form-buttons">
+
+          <button
+            class="ios-button"
+            onclick="saveProfile()">
+            Guardar
+          </button>
+
+          <button
+            class="ios-button gray-button"
+            onclick="showProfile()">
+            Cancelar
+          </button>
+
+        </div>
+
+        <div id="profileMessage"></div>
 
       </div>
+
     </div>
+
   `;
 
-  document.getElementById("avatarFile")
-    .addEventListener("change",function(){
 
-      const file=this.files[0];
+  document
+    .getElementById("avatarFile")
+    .addEventListener(
+      "change",
+      function(){
 
-      if(!file)return;
+        const file=this.files[0];
 
-      document.getElementById("previewAvatar").src=
-        URL.createObjectURL(file);
-    });
+        if(!file)
+          return;
+
+        document
+          .getElementById(
+            "avatarPreview"
+          )
+          .src=
+          URL.createObjectURL(file);
+      }
+    );
 }
 
 
 /* =========================================================
-   GUARDAR PERFIL + FOTO
+   SAVE PROFILE
    ========================================================= */
 
 async function saveProfile(){
 
-  const msg=document.getElementById("profileMsg");
+  const output =
+    document.getElementById(
+      "profileMessage"
+    );
 
-  const username=
-    document.getElementById("editUsername").value.trim();
 
-  const bio=
-    document.getElementById("editBio").value.trim();
+  const username =
+    document.getElementById(
+      "editUsername"
+    ).value.trim();
 
-  const age=
-    document.getElementById("editAge").value;
 
-  const country=
-    document.getElementById("editCountry").value.trim();
+  const bio =
+    document.getElementById(
+      "editBio"
+    ).value.trim();
 
-  const website=
-    document.getElementById("editWebsite").value.trim();
 
-  const file=
-    document.getElementById("avatarFile").files[0];
+  const age =
+    document.getElementById(
+      "editAge"
+    ).value;
 
-  if(!username){
-    msg.innerHTML=message("Necesitas un nombre de usuario.");
+
+  const country =
+    document.getElementById(
+      "editCountry"
+    ).value.trim();
+
+
+  const website =
+    document.getElementById(
+      "editWebsite"
+    ).value.trim();
+
+
+  const file =
+    document.getElementById(
+      "avatarFile"
+    ).files[0];
+
+
+  if(username.length < 3){
+
+    output.innerHTML =
+      alertBox(
+        "El nombre debe tener al menos 3 caracteres."
+      );
+
     return;
   }
 
-  let avatar_url=currentProfile.avatar_url || "";
+
+  let avatarUrl =
+    currentProfile?.avatar_url || "";
+
+
+  /* SUBIR FOTO */
 
   if(file){
 
-    const extension=
-      file.name.split(".").pop().toLowerCase();
+    if(file.size > 5 * 1024 * 1024){
 
-    const path=
-      `${currentUser.id}/${crypto.randomUUID()}.${extension}`;
+      output.innerHTML =
+        alertBox(
+          "La foto debe pesar menos de 5 MB."
+        );
 
-    const {error:uploadError}=await sb.storage
-      .from("avatars")
-      .upload(path,file,{
-        upsert:true,
-        contentType:file.type
-      });
-
-    if(uploadError){
-      msg.innerHTML=message(
-        "No se pudo subir la foto: " +
-        uploadError.message
-      );
       return;
     }
 
-    const {data:urlData}=sb.storage
-      .from("avatars")
-      .getPublicUrl(path);
 
-    avatar_url=urlData.publicUrl;
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const path =
+      currentUser.id +
+      "/" +
+      crypto.randomUUID() +
+      "." +
+      extension;
+
+
+    const {error:uploadError} =
+      await db.storage
+        .from("avatars")
+        .upload(
+          path,
+          file,
+          {
+            contentType:file.type,
+            upsert:false
+          }
+        );
+
+
+    if(uploadError){
+
+      output.innerHTML =
+        alertBox(
+          "No se pudo subir la foto: " +
+          uploadError.message
+        );
+
+      return;
+    }
+
+
+    const {data:urlData} =
+      db.storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+
+    avatarUrl =
+      urlData.publicUrl;
   }
 
-  const {data,error}=await sb
-    .from("profiles")
-    .update({
-      username,
-      bio,
-      age:age ? Number(age) : null,
-      country,
-      website,
-      avatar_url
-    })
-    .eq("id",currentUser.id)
-    .select()
-    .single();
+
+  const {data,error} =
+    await db
+      .from("profiles")
+      .update({
+
+        username,
+
+        bio,
+
+        age:
+          age
+            ? Number(age)
+            : null,
+
+        country,
+
+        website,
+
+        avatar_url:
+          avatarUrl
+
+      })
+      .eq(
+        "id",
+        currentUser.id
+      )
+      .select()
+      .single();
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
 
+
   currentProfile=data;
 
-  msg.innerHTML=message(
-    "Perfil actualizado.",
-    "success"
-  );
 
-  setTimeout(showProfile,700);
+  output.innerHTML =
+    alertBox(
+      "Perfil actualizado.",
+      "success"
+    );
+
+
+  setTimeout(
+    showProfile,
+    700
+  );
 }
 
 
 /* =========================================================
-   USUARIOS
+   USERS
    ========================================================= */
 
 async function showUsers(){
 
-  currentView="users";
+  previousPage=currentPage;
+  currentPage="users";
+
   setTitle("Usuarios");
   setBack(true);
+  setAction(null);
+
 
   screen.innerHTML=
-    `<div class="center">Cargando usuarios...</div>`;
-
-  const {data,error}=await sb
-    .from("profiles")
-    .select("id,username,bio,avatar_url")
-    .order("username");
-
-  if(error){
-    screen.innerHTML=message(error.message);
-    return;
-  }
-
-  if(!data.length){
-    screen.innerHTML=
-      `<div class="center">Todavía no hay usuarios.</div>`;
-    return;
-  }
-
-  screen.innerHTML=`
-
-    <div class="list">
-
-      ${data.map(user=>`
-
-        <div class="row"
-             onclick="viewUser('${user.id}')">
-
-          <img
-            class="avatar smallAvatar"
-            src="${avatar(user.avatar_url)}"
-          >
-
-          <div>
-            <b>${esc(user.username)}</b>
-            <div class="small">
-              ${esc(user.bio || "Sin descripción")}
-            </div>
-          </div>
-
-          <div class="arrow">›</div>
-
-        </div>
-
-      `).join("")}
-
-    </div>
-  `;
-}
+    `<div class="empty">
+       Cargando usuarios...
+     </div>`;
 
 
-async function viewUser(id){
-
-  setTitle("Perfil");
-  setBack(true);
-
-  screen.innerHTML=
-    `<div class="center">Cargando perfil...</div>`;
-
-  const {data,error}=await sb
-    .from("profiles")
-    .select("*")
-    .eq("id",id)
-    .single();
-
-  if(error){
-    screen.innerHTML=message(error.message);
-    return;
-  }
-
-  screen.innerHTML=`
-
-    <div class="profile">
-
-      <img
-        class="avatar"
-        src="${avatar(data.avatar_url)}"
-      >
-
-      <div class="username">
-        ${esc(data.username)}
-      </div>
-
-      <div class="bio">
-        ${esc(data.bio || "Sin descripción.")}
-      </div>
-
-    </div>
-
-    <div class="card">
-
-      <div class="cardhead">Información</div>
-
-      <div class="cardbody">
-
-        <b>País</b>
-        <div>${esc(data.country || "No especificado")}</div>
-
-        <br>
-
-        <b>Edad</b>
-        <div>${data.age || "No especificada"}</div>
-
-        <br>
-
-        ${
-          data.website
-          ? `<b>Web</b><br>
-             <a href="${esc(data.website)}"
-                target="_blank">
-                ${esc(data.website)}
-             </a>`
-          : ""
-        }
-
-      </div>
-
-    </div>
-
-    ${
-      currentUser && currentUser.id !== id
-      ? `<div class="toolbar">
-          <button class="blue"
-                  onclick="startMessage('${id}')">
-            💬 Enviar mensaje
-          </button>
-         </div>`
-      : ""
-    }
-  `;
-}
-
-
-/* =========================================================
-   FOROS
-   ========================================================= */
-
-async function showForums(){
-
-  currentView="forums";
-  setTitle("Foros");
-  setBack(false);
-
-  navAction.classList.remove("hidden");
-  navAction.textContent="+";
-  navAction.onclick=showCreateForum;
-
-  screen.innerHTML=
-    `<div class="center">Cargando foros...</div>`;
-
-  const {data,error}=await sb
-    .from("topics")
-    .select(`
-      id,
-      category,
-      title,
-      body,
-      user_id,
-      created_at,
-      profiles(
-        username,
-        avatar_url
+  const {data,error} =
+    await db
+      .from("profiles")
+      .select(
+        "id,username,bio,avatar_url"
       )
-    `)
-    .order("created_at",{ascending:false});
+      .order(
+        "username",
+        {ascending:true}
+      );
+
 
   if(error){
-    screen.innerHTML=message(error.message);
+
+    screen.innerHTML =
+      alertBox(error.message);
+
     return;
   }
+
 
   if(!data.length){
 
     screen.innerHTML=`
 
-      <div class="center">
+      <div class="empty">
 
-        <div style="font-size:55px">🗂️</div>
+        <div class="empty-icon">
+          👥
+        </div>
 
-        <h2>No hay foros todavía</h2>
-
-        <p class="muted">
-          Sé el primero en crear un foro.
-        </p>
-
-        ${
-          currentUser
-          ? `<button class="blue"
-                    onclick="showCreateForum()">
-               Crear foro
-             </button>`
-          : `<button class="blue"
-                    onclick="showLogin()">
-               Iniciar sesión
-             </button>`
-        }
+        <div class="empty-title">
+          No hay usuarios
+        </div>
 
       </div>
+
     `;
 
     return;
   }
 
+
   screen.innerHTML=`
+
+    <div class="section-header">
+      MIEMBROS
+    </div>
 
     <div class="list">
 
-      ${data.map(topic=>`
+      ${
+        data.map(user=>`
 
-        <div class="row"
-             onclick="openForum(${topic.id})">
+          <div
+            class="row"
+            onclick="viewUser('${user.id}')">
 
-          <img
-            class="avatar smallAvatar"
-            src="${avatar(topic.profiles?.avatar_url)}"
-          >
+            <img
+              class="avatar avatar-small"
+              src="${getAvatar(user.avatar_url)}">
 
-          <div>
+            <div class="row-content">
 
-            <b>${esc(topic.title)}</b>
+              <div class="row-title">
+                ${esc(user.username)}
+              </div>
 
-            <div class="small">
-              ${esc(topic.category)}
-              ·
-              ${esc(topic.profiles?.username || "Usuario")}
+              <div class="row-subtitle">
+                ${
+                  esc(
+                    user.bio ||
+                    "Sin descripción"
+                  )
+                }
+              </div>
+
+            </div>
+
+            <div class="chevron">
+              ›
             </div>
 
           </div>
 
-          <div class="arrow">›</div>
-
-        </div>
-
-      `).join("")}
+        `).join("")
+      }
 
     </div>
+
   `;
 }
 
 
 /* =========================================================
-   CREAR FORO
+   VIEW USER
+   ========================================================= */
+
+async function viewUser(id){
+
+  previousPage=currentPage;
+  currentPage="user";
+
+  setTitle("Perfil");
+  setBack(true);
+  setAction(null);
+
+
+  screen.innerHTML =
+    `<div class="empty">
+       Cargando perfil...
+     </div>`;
+
+
+  const {data,error} =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id",id)
+      .single();
+
+
+  if(error){
+
+    screen.innerHTML =
+      alertBox(error.message);
+
+    return;
+  }
+
+
+  screen.innerHTML=`
+
+    <div class="profile-header">
+
+      <img
+        class="avatar"
+        src="${getAvatar(data.avatar_url)}">
+
+      <div class="profile-name">
+        ${esc(data.username)}
+      </div>
+
+      <div class="profile-bio">
+        ${
+          esc(
+            data.bio ||
+            "Sin descripción."
+          )
+        }
+      </div>
+
+    </div>
+
+
+    <div class="section-header">
+      INFORMACIÓN
+    </div>
+
+    <div class="list">
+
+      <div class="row">
+
+        <div class="row-content">
+
+          <div class="row-title">
+            País
+          </div>
+
+          <div class="row-subtitle">
+            ${
+              esc(
+                data.country ||
+                "No especificado"
+              )
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+
+        <div class="row-content">
+
+          <div class="row-title">
+            Edad
+          </div>
+
+          <div class="row-subtitle">
+            ${
+              data.age ||
+              "No especificada"
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    ${
+      currentUser &&
+      currentUser.id !== id
+      ?
+      `
+        <div class="panel">
+
+          <div class="panel-body center">
+
+            <button
+              class="ios-button"
+              onclick="startMessage('${id}')">
+              💬 Enviar mensaje
+            </button>
+
+          </div>
+
+        </div>
+      `
+      :
+      ""
+    }
+
+  `;
+}
+
+
+/* =========================================================
+   FORUM LIST
+   ========================================================= */
+
+async function showForums(){
+
+  previousPage=currentPage;
+  currentPage="forums";
+
+  setTitle("Foros");
+  setBack(false);
+
+  setTab("Forums");
+
+  setAction(
+    "+",
+    showCreateForum
+  );
+
+
+  screen.innerHTML =
+    `<div class="empty">
+       Cargando foros...
+     </div>`;
+
+
+  const {data,error} =
+    await db
+      .from("topics")
+      .select(`
+        id,
+        category,
+        title,
+        body,
+        user_id,
+        created_at,
+        profiles(
+          username,
+          avatar_url
+        )
+      `)
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+
+  if(error){
+
+    screen.innerHTML =
+      alertBox(error.message);
+
+    return;
+  }
+
+
+  if(!data.length){
+
+    screen.innerHTML=`
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          🗂
+        </div>
+
+        <div class="empty-title">
+          No hay foros
+        </div>
+
+        <p>
+          Todavía nadie ha creado un foro.
+        </p>
+
+        ${
+          currentUser
+          ?
+          `
+            <button
+              class="ios-button"
+              onclick="showCreateForum()">
+              Crear primer foro
+            </button>
+          `
+          :
+          `
+            <button
+              class="ios-button"
+              onclick="showLogin()">
+              Iniciar sesión
+            </button>
+          `
+        }
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  screen.innerHTML=`
+
+    <div class="section-header">
+      CONVERSACIONES
+    </div>
+
+    <div class="list">
+
+      ${
+        data.map(topic=>`
+
+          <div
+            class="row"
+            onclick="openForum(${topic.id})">
+
+            <img
+              class="avatar avatar-small"
+              src="${getAvatar(
+                topic.profiles?.avatar_url
+              )}">
+
+            <div class="row-content">
+
+              <div class="row-title">
+                ${esc(topic.title)}
+              </div>
+
+              <div class="row-subtitle">
+                ${esc(topic.category)}
+                ·
+                ${esc(
+                  topic.profiles?.username ||
+                  "Usuario"
+                )}
+              </div>
+
+            </div>
+
+            <div class="chevron">
+              ›
+            </div>
+
+          </div>
+
+        `).join("")
+      }
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
+   CREATE FORUM
    ========================================================= */
 
 function showCreateForum(){
 
   if(!currentUser){
+
     showLogin();
     return;
   }
 
-  currentView="createForum";
+
+  previousPage=currentPage;
+  currentPage="createForum";
+
   setTitle("Nuevo foro");
   setBack(true);
+  setAction(null);
 
-  navAction.classList.add("hidden");
 
   screen.innerHTML=`
 
-    <div class="card">
+    <div class="panel">
 
-      <div class="cardhead">
-        Crear un foro
+      <div class="panel-title">
+        Nuevo foro
       </div>
 
-      <div class="cardbody">
+      <div class="form">
 
-        <label>Categoría</label>
+        <label>
+          Categoría
+        </label>
 
         <select id="forumCategory">
 
-          <option>Música</option>
-          <option>Juegos</option>
-          <option>Apps</option>
-          <option>Off-topic</option>
+          <option value="Música">
+            Música
+          </option>
+
+          <option value="Juegos">
+            Juegos
+          </option>
+
+          <option value="Apps">
+            Apps
+          </option>
+
+          <option value="Off-topic">
+            Off-topic
+          </option>
 
         </select>
 
-        <label>Título</label>
+
+        <label>
+          Título
+        </label>
 
         <input
           id="forumTitle"
           maxlength="120"
-          placeholder="Título del foro"
-        >
+          placeholder="Título del foro">
 
-        <label>Contenido</label>
+
+        <label>
+          Contenido
+        </label>
 
         <textarea
           id="forumBody"
           maxlength="10000"
-          placeholder="Escribe algo..."
-        ></textarea>
+          placeholder="Escribe el contenido..."></textarea>
 
-        <button
-          class="blue"
-          onclick="createForum()">
-          Publicar foro
-        </button>
 
-        <div id="forumMsg"></div>
+        <div class="form-buttons">
+
+          <button
+            class="ios-button"
+            onclick="createForum()">
+            Publicar
+          </button>
+
+          <button
+            class="ios-button gray-button"
+            onclick="showForums()">
+            Cancelar
+          </button>
+
+        </div>
+
+        <div id="forumMessage"></div>
 
       </div>
 
     </div>
+
   `;
 }
 
 
 async function createForum(){
 
-  const category=
-    document.getElementById("forumCategory").value;
+  const category =
+    document.getElementById(
+      "forumCategory"
+    ).value;
 
-  const title=
-    document.getElementById("forumTitle").value.trim();
+  const title =
+    document.getElementById(
+      "forumTitle"
+    ).value.trim();
 
-  const body=
-    document.getElementById("forumBody").value.trim();
+  const body =
+    document.getElementById(
+      "forumBody"
+    ).value.trim();
 
-  const msg=document.getElementById("forumMsg");
+  const output =
+    document.getElementById(
+      "forumMessage"
+    );
+
 
   if(!title || !body){
-    msg.innerHTML=
-      message("Escribe un título y contenido.");
+
+    output.innerHTML =
+      alertBox(
+        "Escribe un título y contenido."
+      );
+
     return;
   }
 
-  const {data,error}=await sb
-    .from("topics")
-    .insert({
-      category,
-      title,
-      body,
-      user_id:currentUser.id
-    })
-    .select()
-    .single();
+
+  const {data,error} =
+    await db
+      .from("topics")
+      .insert({
+
+        category,
+
+        title,
+
+        body,
+
+        user_id:
+          currentUser.id
+
+      })
+      .select()
+      .single();
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
+
 
   openForum(data.id);
 }
 
 
 /* =========================================================
-   ABRIR FORO
+   OPEN FORUM
    ========================================================= */
 
 async function openForum(id){
 
-  currentView="forum";
+  previousPage=currentPage;
+  currentPage="forum";
+
   setTitle("Foro");
   setBack(true);
-  navAction.classList.add("hidden");
+  setAction(null);
 
-  screen.innerHTML=
-    `<div class="center">Cargando...</div>`;
 
-  const {data:topic,error:topicError}=await sb
-    .from("topics")
-    .select(`
-      *,
-      profiles(
-        username,
-        avatar_url
-      )
-    `)
-    .eq("id",id)
-    .single();
+  screen.innerHTML =
+    `<div class="empty">
+       Cargando...
+     </div>`;
+
+
+  const {data:topic,error:topicError} =
+    await db
+      .from("topics")
+      .select(`
+        *,
+        profiles(
+          username,
+          avatar_url
+        )
+      `)
+      .eq("id",id)
+      .single();
+
 
   if(topicError){
-    screen.innerHTML=message(topicError.message);
+
+    screen.innerHTML =
+      alertBox(topicError.message);
+
     return;
   }
 
-  const {data:replies,error:replyError}=await sb
-    .from("replies")
-    .select(`
-      *,
-      profiles(
-        username,
-        avatar_url
+
+  const {data:replies,error:replyError} =
+    await db
+      .from("replies")
+      .select(`
+        *,
+        profiles(
+          username,
+          avatar_url
+        )
+      `)
+      .eq(
+        "topic_id",
+        id
       )
-    `)
-    .eq("topic_id",id)
-    .order("created_at");
+      .order(
+        "created_at",
+        {ascending:true}
+      );
+
 
   if(replyError){
-    screen.innerHTML=message(replyError.message);
+
+    screen.innerHTML =
+      alertBox(replyError.message);
+
     return;
   }
+
 
   screen.innerHTML=`
 
-    <div class="card">
+    <div class="panel">
 
-      <div class="cardbody">
+      <div class="panel-title">
 
-        <div class="topicTitle">
-          ${esc(topic.title)}
-        </div>
+        ${esc(topic.title)}
 
-        <div class="small">
+        <div class="small-text">
           ${esc(topic.category)}
         </div>
 
-        <br>
+      </div>
 
-        <div class="postUser">
+
+      <div class="forum-post">
+
+        <div class="forum-user">
 
           <img
-            class="avatar smallAvatar"
-            src="${avatar(topic.profiles?.avatar_url)}"
-          >
+            class="avatar avatar-small"
+            src="${getAvatar(
+              topic.profiles?.avatar_url
+            )}">
 
-          <b>
-            ${esc(topic.profiles?.username || "Usuario")}
-          </b>
+          <div>
+
+            <div class="forum-user-name">
+              ${esc(
+                topic.profiles?.username ||
+                "Usuario"
+              )}
+            </div>
+
+            <div class="forum-meta">
+              Autor
+            </div>
+
+          </div>
 
         </div>
 
-        <div style="white-space:pre-wrap">
+
+        <div class="forum-body">
           ${esc(topic.body)}
         </div>
 
@@ -1317,186 +2767,263 @@ async function openForum(id){
 
     </div>
 
-    <div class="card">
 
-      <div class="cardhead">
-        Respuestas (${replies.length})
-      </div>
+    <div class="section-header">
+      RESPUESTAS (${replies.length})
+    </div>
+
+
+    <div class="list">
 
       ${
         replies.length
-        ? replies.map(reply=>`
+        ?
+        replies.map(reply=>`
 
-          <div class="post">
+          <div class="forum-post">
 
-            <div class="postUser">
+            <div class="forum-user">
 
               <img
-                class="avatar smallAvatar"
-                src="${avatar(reply.profiles?.avatar_url)}"
-              >
+                class="avatar avatar-small"
+                src="${getAvatar(
+                  reply.profiles?.avatar_url
+                )}">
 
-              <b>
-                ${esc(reply.profiles?.username || "Usuario")}
-              </b>
+              <div>
+
+                <div class="forum-user-name">
+                  ${esc(
+                    reply.profiles?.username ||
+                    "Usuario"
+                  )}
+                </div>
+
+                <div class="forum-meta">
+                  Miembro
+                </div>
+
+              </div>
 
             </div>
 
-            <div style="white-space:pre-wrap">
+
+            <div class="forum-body">
               ${esc(reply.body)}
             </div>
 
           </div>
 
         `).join("")
-        : `<div class="center muted">
-             Todavía no hay respuestas.
-           </div>`
+        :
+        `
+          <div class="empty">
+            Todavía no hay respuestas.
+          </div>
+        `
       }
 
     </div>
 
+
     ${
       currentUser
-      ? `
-        <div class="card">
+      ?
+      `
+        <div class="panel">
 
-          <div class="cardhead">
+          <div class="panel-title">
             Responder
           </div>
 
-          <div class="cardbody">
+          <div class="form">
 
             <textarea
               id="replyBody"
-              placeholder="Escribe tu respuesta..."
-            ></textarea>
+              maxlength="10000"
+              placeholder="Escribe una respuesta..."></textarea>
 
             <button
-              class="blue"
+              class="ios-button"
               onclick="sendReply(${id})">
               Publicar respuesta
             </button>
 
-            <div id="replyMsg"></div>
+            <div id="replyMessage"></div>
 
           </div>
 
         </div>
       `
-      : `
-        <div class="center">
+      :
+      `
+        <div class="empty">
+
           <button
-            class="blue"
+            class="ios-button"
             onclick="showLogin()">
             Inicia sesión para responder
           </button>
+
         </div>
       `
     }
+
   `;
 }
 
 
+/* =========================================================
+   REPLY
+   ========================================================= */
+
 async function sendReply(topicId){
 
-  const body=
-    document.getElementById("replyBody").value.trim();
+  const body =
+    document.getElementById(
+      "replyBody"
+    ).value.trim();
 
-  const msg=document.getElementById("replyMsg");
+  const output =
+    document.getElementById(
+      "replyMessage"
+    );
+
 
   if(!body){
-    msg.innerHTML=message("Escribe una respuesta.");
+
+    output.innerHTML =
+      alertBox(
+        "Escribe una respuesta."
+      );
+
     return;
   }
 
-  const {error}=await sb
-    .from("replies")
-    .insert({
-      topic_id:topicId,
-      body,
-      user_id:currentUser.id
-    });
+
+  const {error} =
+    await db
+      .from("replies")
+      .insert({
+
+        topic_id:topicId,
+
+        body,
+
+        user_id:
+          currentUser.id
+
+      });
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
+
 
   openForum(topicId);
 }
 
 
 /* =========================================================
-   MENSAJES PRIVADOS
+   MESSAGES
    ========================================================= */
 
 async function showMessages(){
 
   if(!currentUser){
+
     showLogin();
     return;
   }
 
-  currentView="messages";
+
+  previousPage=currentPage;
+  currentPage="messages";
+
   setTitle("Mensajes");
   setBack(false);
+  setTab("Messages");
 
-  navAction.classList.remove("hidden");
-  navAction.textContent="+";
-  navAction.onclick=showNewMessage;
+  setAction(
+    "+",
+    showNewMessage
+  );
 
-  screen.innerHTML=
-    `<div class="center">Cargando mensajes...</div>`;
 
-  /*
-    Esta consulta usa la tabla messages.
-    Debes crearla en Supabase con el SQL indicado
-    después del código.
-  */
+  screen.innerHTML =
+    `<div class="empty">
+       Cargando mensajes...
+     </div>`;
 
-  const {data,error}=await sb
-    .from("messages")
-    .select(`
-      id,
-      sender_id,
-      receiver_id,
-      body,
-      created_at,
-      sender:profiles!messages_sender_id_fkey(
-        username,
-        avatar_url
-      ),
-      receiver:profiles!messages_receiver_id_fkey(
-        username,
-        avatar_url
+
+  const {data,error} =
+    await db
+      .from("messages")
+      .select(`
+        id,
+        sender_id,
+        receiver_id,
+        body,
+        created_at,
+
+        sender:profiles!messages_sender_id_fkey(
+          username,
+          avatar_url
+        ),
+
+        receiver:profiles!messages_receiver_id_fkey(
+          username,
+          avatar_url
+        )
+
+      `)
+      .or(
+        `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
       )
-    `)
-    .or(
-      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
-    )
-    .order("created_at",{ascending:false});
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
 
   if(error){
-    screen.innerHTML=message(
-      "No se pudieron cargar los mensajes. " +
-      error.message
-    );
+
+    screen.innerHTML =
+      alertBox(
+        "No se pudieron cargar los mensajes: " +
+        error.message
+      );
+
     return;
   }
+
 
   if(!data.length){
 
     screen.innerHTML=`
 
-      <div class="center">
+      <div class="empty">
 
-        <div style="font-size:55px">💬</div>
+        <div class="empty-icon">
+          💬
+        </div>
 
-        <h2>No tienes mensajes</h2>
+        <div class="empty-title">
+          No tienes mensajes
+        </div>
+
+        <p>
+          Puedes iniciar una conversación
+          con otro usuario.
+        </p>
 
         <button
-          class="blue"
+          class="ios-button"
           onclick="showNewMessage()">
           Nuevo mensaje
         </button>
@@ -1508,117 +3035,152 @@ async function showMessages(){
     return;
   }
 
-  const users={};
+
+  const conversations={};
+
 
   data.forEach(m=>{
 
-    const other=
-      m.sender_id===currentUser.id
-      ? m.receiver
-      : m.sender;
-
-    const id=
-      m.sender_id===currentUser.id
+    const otherId =
+      m.sender_id === currentUser.id
       ? m.receiver_id
       : m.sender_id;
 
-    if(!users[id]){
-      users[id]={
-        id,
-        username:other?.username || "Usuario",
-        avatar_url:other?.avatar_url || "",
-        body:m.body,
-        date:m.created_at
+
+    const other =
+      m.sender_id === currentUser.id
+      ? m.receiver
+      : m.sender;
+
+
+    if(!conversations[otherId]){
+
+      conversations[otherId]={
+        id:otherId,
+        username:
+          other?.username ||
+          "Usuario",
+        avatar_url:
+          other?.avatar_url ||
+          "",
+        body:m.body
       };
     }
 
   });
 
+
   screen.innerHTML=`
+
+    <div class="section-header">
+      CONVERSACIONES
+    </div>
 
     <div class="list">
 
-      ${Object.values(users).map(u=>`
+      ${
+        Object.values(conversations)
+          .map(c=>`
 
-        <div class="row"
-             onclick="openConversation('${u.id}')">
+            <div
+              class="row"
+              onclick="openConversation('${c.id}')">
 
-          <img
-            class="avatar smallAvatar"
-            src="${avatar(u.avatar_url)}"
-          >
+              <img
+                class="avatar avatar-small"
+                src="${getAvatar(c.avatar_url)}">
 
-          <div>
+              <div class="row-content">
 
-            <b>${esc(u.username)}</b>
+                <div class="row-title">
+                  ${esc(c.username)}
+                </div>
 
-            <div class="small">
-              ${esc(u.body.slice(0,60))}
+                <div class="row-subtitle">
+                  ${esc(
+                    c.body.slice(0,70)
+                  )}
+                </div>
+
+              </div>
+
+              <div class="chevron">
+                ›
+              </div>
+
             </div>
 
-          </div>
-
-          <div class="arrow">›</div>
-
-        </div>
-
-      `).join("")}
+          `).join("")
+      }
 
     </div>
+
   `;
 }
 
 
 /* =========================================================
-   NUEVO MENSAJE
+   NEW MESSAGE
    ========================================================= */
 
 function showNewMessage(){
 
   if(!currentUser){
+
     showLogin();
     return;
   }
 
-  currentView="newMessage";
+
+  previousPage=currentPage;
+  currentPage="newMessage";
+
   setTitle("Nuevo mensaje");
   setBack(true);
+  setAction(null);
+
 
   screen.innerHTML=`
 
-    <div class="card">
+    <div class="panel">
 
-      <div class="cardhead">
-        Enviar mensaje
+      <div class="panel-title">
+        Nuevo mensaje
       </div>
 
-      <div class="cardbody">
+      <div class="form">
 
-        <label>Usuario</label>
+        <label>
+          Usuario
+        </label>
 
         <input
-          id="messageUser"
-          placeholder="Nombre de usuario"
-        >
+          id="messageUsername"
+          placeholder="Nombre de usuario">
 
-        <label>Mensaje</label>
+
+        <label>
+          Mensaje
+        </label>
 
         <textarea
           id="messageBody"
-          placeholder="Escribe tu mensaje..."
-        ></textarea>
+          placeholder="Escribe tu mensaje..."></textarea>
+
 
         <button
-          class="blue"
+          class="ios-button"
           onclick="sendNewMessage()">
           Enviar
         </button>
 
-        <div id="messageMsg"></div>
+
+        <div id="messageOutput"></div>
 
       </div>
 
     </div>
+
   `;
 }
 
@@ -1626,20 +3188,30 @@ function showNewMessage(){
 async function startMessage(userId){
 
   if(!currentUser){
+
     showLogin();
     return;
   }
 
+
   showNewMessage();
 
-  const {data}=await sb
-    .from("profiles")
-    .select("username")
-    .eq("id",userId)
-    .single();
+
+  const {data} =
+    await db
+      .from("profiles")
+      .select("username")
+      .eq("id",userId)
+      .single();
+
 
   if(data){
-    document.getElementById("messageUser").value=
+
+    document
+      .getElementById(
+        "messageUsername"
+      )
+      .value=
       data.username;
   }
 }
@@ -1647,143 +3219,227 @@ async function startMessage(userId){
 
 async function sendNewMessage(){
 
-  const username=
-    document.getElementById("messageUser").value.trim();
+  const username =
+    document
+      .getElementById(
+        "messageUsername"
+      )
+      .value.trim();
 
-  const body=
-    document.getElementById("messageBody").value.trim();
 
-  const msg=document.getElementById("messageMsg");
+  const body =
+    document
+      .getElementById(
+        "messageBody"
+      )
+      .value.trim();
+
+
+  const output =
+    document
+      .getElementById(
+        "messageOutput"
+      );
+
 
   if(!username || !body){
-    msg.innerHTML=message("Completa todos los campos.");
+
+    output.innerHTML =
+      alertBox(
+        "Completa todos los campos."
+      );
+
     return;
   }
 
-  const {data:user,error:userError}=await sb
-    .from("profiles")
-    .select("id")
-    .eq("username",username)
-    .single();
+
+  const {data:user,error:userError} =
+    await db
+      .from("profiles")
+      .select("id")
+      .eq(
+        "username",
+        username
+      )
+      .single();
+
 
   if(userError || !user){
-    msg.innerHTML=
-      message("No existe ese usuario.");
+
+    output.innerHTML =
+      alertBox(
+        "No existe ese usuario."
+      );
+
     return;
   }
 
-  if(user.id===currentUser.id){
-    msg.innerHTML=
-      message("No puedes enviarte un mensaje a ti mismo.");
+
+  if(user.id === currentUser.id){
+
+    output.innerHTML =
+      alertBox(
+        "No puedes enviarte un mensaje a ti mismo."
+      );
+
     return;
   }
 
-  const {error}=await sb
-    .from("messages")
-    .insert({
-      sender_id:currentUser.id,
-      receiver_id:user.id,
-      body
-    });
+
+  const {error} =
+    await db
+      .from("messages")
+      .insert({
+
+        sender_id:
+          currentUser.id,
+
+        receiver_id:
+          user.id,
+
+        body
+
+      });
+
 
   if(error){
-    msg.innerHTML=message(error.message);
+
+    output.innerHTML =
+      alertBox(error.message);
+
     return;
   }
+
 
   openConversation(user.id);
 }
 
 
 /* =========================================================
-   CONVERSACIÓN
+   CONVERSATION
    ========================================================= */
 
 async function openConversation(userId){
 
-  currentView="conversation";
+  previousPage=currentPage;
+  currentPage="conversation";
+
   setTitle("Mensajes");
   setBack(true);
+  setAction(null);
 
-  const {data:user}=await sb
-    .from("profiles")
-    .select("*")
-    .eq("id",userId)
-    .single();
 
-  const {data,error}=await sb
-    .from("messages")
-    .select("*")
-    .or(
-      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
-    )
-    .order("created_at");
+  const {data:user,error:userError} =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id",userId)
+      .single();
 
-  if(error){
-    screen.innerHTML=message(error.message);
+
+  if(userError){
+
+    screen.innerHTML =
+      alertBox(userError.message);
+
     return;
   }
 
+
+  const {data,error} =
+    await db
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
+      )
+      .order(
+        "created_at",
+        {ascending:true}
+      );
+
+
+  if(error){
+
+    screen.innerHTML =
+      alertBox(error.message);
+
+    return;
+  }
+
+
   screen.innerHTML=`
 
-    <div class="profile" style="padding:12px">
+    <div class="profile-header"
+         style="padding:12px">
 
       <img
-        class="avatar smallAvatar"
-        src="${avatar(user?.avatar_url)}"
-      >
+        class="avatar avatar-small"
+        src="${getAvatar(user.avatar_url)}">
 
-      <div class="username" style="font-size:17px">
-        ${esc(user?.username)}
+      <div
+        class="profile-name"
+        style="font-size:17px">
+
+        ${esc(user.username)}
+
       </div>
 
     </div>
 
-    <div class="card">
+
+    <div class="list">
 
       ${
         data.length
-        ? data.map(m=>`
+        ?
+        data.map(m=>`
 
-          <div class="message ${
-            m.sender_id===currentUser.id
-            ? "me"
-            : ""
-          }">
+          <div
+            class="message ${
+              m.sender_id === currentUser.id
+                ? "me"
+                : ""
+            }">
 
-            <b>
+            <div class="message-name">
+
               ${
-                m.sender_id===currentUser.id
+                m.sender_id === currentUser.id
                 ? "Tú"
-                : esc(user?.username)
+                : esc(user.username)
               }
-            </b>
 
-            <div style="white-space:pre-wrap">
+            </div>
+
+            <div class="message-body">
               ${esc(m.body)}
             </div>
 
           </div>
 
         `).join("")
-        : `<div class="center muted">
-             No hay mensajes todavía.
-           </div>`
+        :
+        `
+          <div class="empty">
+            No hay mensajes todavía.
+          </div>
+        `
       }
 
     </div>
 
-    <div class="card">
 
-      <div class="cardbody">
+    <div class="panel">
+
+      <div class="form">
 
         <textarea
-          id="conversationBody"
-          placeholder="Escribe un mensaje..."
-        ></textarea>
+          id="conversationText"
+          placeholder="Escribe un mensaje..."></textarea>
 
         <button
-          class="blue"
+          class="ios-button"
           onclick="sendConversationMessage('${userId}')">
           Enviar
         </button>
@@ -1791,121 +3447,108 @@ async function openConversation(userId){
       </div>
 
     </div>
+
   `;
 }
 
 
 async function sendConversationMessage(userId){
 
-  const body=
-    document.getElementById("conversationBody")
-      .value.trim();
+  const input =
+    document.getElementById(
+      "conversationText"
+    );
 
-  if(!body)return;
 
-  const {error}=await sb
-    .from("messages")
-    .insert({
-      sender_id:currentUser.id,
-      receiver_id:userId,
-      body
-    });
+  const body =
+    input.value.trim();
+
+
+  if(!body)
+    return;
+
+
+  const {error} =
+    await db
+      .from("messages")
+      .insert({
+
+        sender_id:
+          currentUser.id,
+
+        receiver_id:
+          userId,
+
+        body
+
+      });
+
 
   if(error){
+
     alert(error.message);
     return;
   }
+
 
   openConversation(userId);
 }
 
 
 /* =========================================================
-   NAVEGACIÓN
+   NAVIGATION
    ========================================================= */
 
 function goBack(){
 
-  if(currentView==="login" ||
-     currentView==="register" ||
-     currentView==="profile" ||
-     currentView==="users"){
-    showHome();
-    return;
-  }
+  switch(currentPage){
 
-  if(currentView==="createForum"){
-    showForums();
-    return;
-  }
+    case "login":
+    case "register":
+    case "users":
+      showHome();
+      break;
 
-  if(currentView==="forum"){
-    showForums();
-    return;
-  }
+    case "profile":
+      showHome();
+      break;
 
-  if(currentView==="newMessage"){
-    showMessages();
-    return;
-  }
+    case "editProfile":
+      showProfile();
+      break;
 
-  if(currentView==="conversation"){
-    showMessages();
-    return;
-  }
+    case "createForum":
+      showForums();
+      break;
 
-  showHome();
-}
+    case "forum":
+      showForums();
+      break;
 
+    case "newMessage":
+      showMessages();
+      break;
 
-/* =========================================================
-   SESIÓN SUPABASE
-   ========================================================= */
+    case "conversation":
+      showMessages();
+      break;
 
-async function refreshSession(){
+    case "user":
+      showUsers();
+      break;
 
-  const {data}=await sb.auth.getSession();
-
-  currentUser=data.session?.user || null;
-
-  if(currentUser){
-    await ensureProfile();
-  }else{
-    currentProfile=null;
+    default:
+      showHome();
   }
 }
 
-sb.auth.onAuthStateChange(async(event,session)=>{
-
-  currentUser=session?.user || null;
-
-  if(currentUser){
-    await ensureProfile();
-  }else{
-    currentProfile=null;
-  }
-
-});
-
 
 /* =========================================================
-   INICIO
+   REALTIME
    ========================================================= */
 
-(async()=>{
+db.channel("community-live")
 
-  await refreshSession();
-
-  showHome();
-
-})();
-
-
-/* =========================================================
-   ACTUALIZACIÓN EN TIEMPO REAL
-   ========================================================= */
-
-sb.channel("forum-realtime")
   .on(
     "postgres_changes",
     {
@@ -1914,29 +3557,40 @@ sb.channel("forum-realtime")
       table:"topics"
     },
     ()=>{
-      if(currentView==="forums"){
+      if(currentPage==="forums"){
         showForums();
       }
     }
   )
+
   .on(
     "postgres_changes",
     {
       event:"*",
       schema:"public",
-      table:"replies"
+      table:"messages"
     },
     ()=>{
-      if(currentView==="forum"){
-        /*
-          La página se actualizará cuando vuelva
-          a abrir el foro.
-        */
+      if(currentPage==="messages"){
+        showMessages();
       }
     }
   )
+
   .subscribe();
 
+
+/* =========================================================
+   START
+   ========================================================= */
+
+(async()=>{
+
+  await loadSession();
+
+  showHome();
+
+})();
 </script>
 
 </body>

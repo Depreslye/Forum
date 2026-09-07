@@ -1,2877 +1,1941 @@
-
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iPod Community</title>
 
-<title>iPod Forum</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-/* =====================================================
-   IPOD TOUCH / IOS 6 STYLE
-===================================================== */
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
-}
-
-html,
+*{box-sizing:border-box}
 body{
-    margin:0;
-    padding:0;
-
-    min-height:100%;
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #d9d9d9 0%,
-            #bcbcbc 50%,
-            #d5d5d5 100%
-        );
-
-    color:#222;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  background:linear-gradient(#dfe3e8,#b7bdc5);
+  color:#111;
 }
-
-
-/* =====================================================
-   IPOD BODY
-===================================================== */
-
 #app{
-
-    width:100%;
-    max-width:520px;
-
-    min-height:100vh;
-
-    margin:auto;
-
-    background:
-        linear-gradient(
-            #eeeeee,
-            #d1d1d1
-        );
-
-    box-shadow:
-        0 0 25px rgba(0,0,0,.45);
-
-    position:relative;
-
+  max-width:430px;
+  min-height:100vh;
+  margin:auto;
+  background:#f4f4f4;
+  box-shadow:0 0 35px #555;
+  position:relative;
 }
-
-
-/* =====================================================
-   TOP BAR
-===================================================== */
-
+.status{
+  height:22px;
+  background:#111;
+  color:white;
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 8px;
+}
 .navbar{
-
-    height:52px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 7px;
-
-    color:white;
-
-    background:
-        linear-gradient(
-            #7d7d7d 0%,
-            #555 45%,
-            #363636 50%,
-            #626262 100%
-        );
-
-    border-bottom:1px solid #222;
-
-    box-shadow:
-        inset 0 1px rgba(255,255,255,.35),
-        0 1px 3px rgba(0,0,0,.5);
-
+  height:46px;
+  background:linear-gradient(#fafafa,#cfd2d5);
+  border-bottom:1px solid #777;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:5px;
+  position:sticky;
+  top:0;
+  z-index:5;
 }
-
-
-.navbar h1{
-
-    margin:0;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    text-shadow:
-        0 -1px 1px #000;
-
+.navtitle{
+  font-size:20px;
+  font-weight:bold;
+  text-shadow:0 1px white;
 }
-
-
-.navbutton{
-
-    min-width:65px;
-
-    padding:7px 10px;
-
-    color:white;
-
-    font-size:13px;
-
-    font-weight:bold;
-
-    border-radius:6px;
-
-    border:1px solid #222;
-
-    background:
-        linear-gradient(
-            #777,
-            #333
-        );
-
-    box-shadow:
-        inset 0 1px rgba(255,255,255,.35),
-        0 1px 1px rgba(0,0,0,.5);
-
+button,.button{
+  border:1px solid #777;
+  border-radius:7px;
+  background:linear-gradient(#fff,#c8c8c8);
+  padding:7px 11px;
+  font-weight:bold;
+  color:#111;
+  box-shadow:0 1px 2px #888;
+  cursor:pointer;
 }
-
-
-.navbutton:active{
-
-    background:
-        linear-gradient(
-            #333,
-            #777
-        );
-
-}
-
-
-/* =====================================================
-   CONTENT
-===================================================== */
-
-.screen{
-
-    padding:12px;
-
-}
-
-
-.hidden{
-
-    display:none!important;
-
-}
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-.search{
-
-    width:100%;
-
-    height:38px;
-
-    padding:0 12px;
-
-    border-radius:8px;
-
-    border:1px solid #999;
-
-    background:
-        linear-gradient(
-            #fff,
-            #e5e5e5
-        );
-
-    box-shadow:
-        inset 0 1px 3px rgba(0,0,0,.2);
-
-    font-size:16px;
-
-    outline:none;
-
-    margin-bottom:14px;
-
-}
-
-
-.search:focus{
-
-    border-color:#4c9bea;
-
-}
-
-
-/* =====================================================
-   SECTIONS
-===================================================== */
-
-.section{
-
-    margin-bottom:20px;
-
-}
-
-
-.section-title{
-
-    color:#555;
-
-    font-size:13px;
-
-    font-weight:bold;
-
-    text-shadow:
-        0 1px white;
-
-    margin:
-
-        7px 10px;
-
-}
-
-
-/* =====================================================
-   IOS LIST
-===================================================== */
-
-.list{
-
-    background:#fff;
-
-    border:1px solid #999;
-
-    border-radius:9px;
-
-    overflow:hidden;
-
-    box-shadow:
-        0 1px 2px rgba(0,0,0,.25);
-
-}
-
-
-.item{
-
-    min-height:52px;
-
-    padding:10px 38px 10px 14px;
-
-    position:relative;
-
-    background:
-        linear-gradient(
-            #fff,
-            #eeeeee
-        );
-
-    border-bottom:1px solid #ccc;
-
-    cursor:pointer;
-
-}
-
-
-.item:last-child{
-
-    border-bottom:none;
-
-}
-
-
-.item:after{
-
-    content:"›";
-
-    position:absolute;
-
-    right:14px;
-
-    top:50%;
-
-    transform:
-        translateY(-50%);
-
-    color:#999;
-
-    font-size:27px;
-
-    font-weight:normal;
-
-}
-
-
-.item:active{
-
-    color:white;
-
-    background:
-        linear-gradient(
-            #70b5f5,
-            #277dcc
-        );
-
-}
-
-
-.item:active .item-info{
-
-    color:#e6f2ff;
-
-}
-
-
-.item-title{
-
-    font-size:16px;
-
-    font-weight:bold;
-
-}
-
-
-.item-info{
-
-    color:#777;
-
-    font-size:12px;
-
-    margin-top:4px;
-
-}
-
-
-/* =====================================================
-   IPOD BUTTON
-===================================================== */
-
-.bigbutton{
-
-    width:100%;
-
-    min-height:42px;
-
-    padding:10px;
-
-    border-radius:8px;
-
-    border:1px solid #777;
-
-    color:#111;
-
-    font-size:16px;
-
-    font-weight:bold;
-
-    background:
-        linear-gradient(
-            #fff,
-            #c7c7c7
-        );
-
-    box-shadow:
-        inset 0 1px white,
-        0 1px 2px rgba(0,0,0,.3);
-
-}
-
-
-.bigbutton:active{
-
-    background:
-        linear-gradient(
-            #aaa,
-            #eee
-        );
-
-}
-
-
-/* =====================================================
-   FORM
-===================================================== */
-
-input,
-textarea,
-select{
-
-    width:100%;
-
-    padding:10px;
-
-    border:1px solid #999;
-
-    border-radius:7px;
-
-    background:white;
-
-    box-shadow:
-        inset 0 1px 2px rgba(0,0,0,.15);
-
-    font-family:inherit;
-
-    font-size:16px;
-
-    margin-top:5px;
-
-    margin-bottom:13px;
-
-}
-
-
-textarea{
-
-    min-height:120px;
-
-    resize:vertical;
-
-}
-
-
-label{
-
-    display:block;
-
-    color:#555;
-
-    font-size:13px;
-
-    font-weight:bold;
-
-    text-shadow:0 1px white;
-
-    margin-top:5px;
-
-}
-
-
-/* =====================================================
-   CARD
-===================================================== */
-
-.card{
-
-    padding:14px;
-
-    margin-bottom:12px;
-
-    background:
-        linear-gradient(
-            #fafafa,
-            #e3e3e3
-        );
-
-    border:1px solid #999;
-
-    border-radius:9px;
-
-    box-shadow:
-        0 1px 2px rgba(0,0,0,.25);
-
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-.profile-header,
-.profile-top{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    margin-bottom:18px;
-
-}
-
-
-.large-avatar{
-
-    width:90px;
-    height:90px;
-
-    flex-shrink:0;
-
-    display:flex;
-
-    justify-content:center;
-    align-items:center;
-
-    overflow:hidden;
-
-    border-radius:18px;
-
-    border:1px solid #777;
-
-    background:
-        linear-gradient(
-            #f7f7f7,
-            #aaa
-        );
-
-    box-shadow:
-        inset 0 1px white,
-        0 2px 3px rgba(0,0,0,.3);
-
-    font-size:40px;
-
-}
-
-
-.avatar-image{
-
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-}
-
-
-.profile-main h2{
-
-    margin:0 0 5px;
-
-    font-size:22px;
-
-}
-
-
-.profile-country{
-
-    color:#777;
-
-    font-size:13px;
-
-}
-
-
-.profile-description{
-
-    background:white;
-
-    border:1px solid #aaa;
-
-    border-radius:8px;
-
-    padding:12px;
-
-    margin-bottom:12px;
-
-    line-height:1.4;
-
-}
-
-
-.profile-details{
-
-    background:white;
-
-    border:1px solid #aaa;
-
-    border-radius:8px;
-
-    padding:8px;
-
-    margin-bottom:15px;
-
-}
-
-
-.profile-details div{
-
-    padding:8px 4px;
-
-    border-bottom:1px solid #ddd;
-
-}
-
-
-.profile-details div:last-child{
-
-    border-bottom:none;
-
-}
-
-
-/* =====================================================
-   REPLIES
-===================================================== */
-
-.reply{
-
-    background:white;
-
-    border:1px solid #aaa;
-
-    border-radius:8px;
-
-    padding:12px;
-
-    margin-bottom:9px;
-
-    box-shadow:
-        0 1px 2px rgba(0,0,0,.2);
-
-}
-
-
-.reply-user{
-
-    font-weight:bold;
-
-    color:#333;
-
-}
-
-
-.reply-date{
-
-    color:#888;
-
-    font-size:11px;
-
-    margin-top:3px;
-
-}
-
-
-.reply-body,
-.topic-body{
-
-    margin-top:10px;
-
-    white-space:pre-wrap;
-
-    word-break:break-word;
-
-    line-height:1.45;
-
-}
-
-
-/* =====================================================
-   EMPTY
-===================================================== */
-
-.empty{
-
-    padding:28px 15px;
-
-    text-align:center;
-
-    color:#777;
-
-    font-size:14px;
-
-    background:white;
-
-}
-
-
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-.message{
-
-    padding:10px;
-
-    margin-bottom:10px;
-
-    border-radius:7px;
-
-    color:#174b7c;
-
-    background:
-        linear-gradient(
-            #eaf5ff,
-            #d4e9fb
-        );
-
-    border:1px solid #91b7d8;
-
-    font-size:14px;
-
-}
-
-
-/* =====================================================
-   TOPIC HEADER
-===================================================== */
-
-.topic-category{
-
-    color:#777;
-
-    font-size:12px;
-
-    font-weight:bold;
-
-    text-transform:uppercase;
-
-}
-
-
-.topic-author{
-
-    color:#777;
-
-    font-size:12px;
-
-}
-
-
-.topic-title{
-
-    margin:7px 0;
-
-    font-size:22px;
-
-    line-height:1.2;
-
-}
-
-
-/* =====================================================
-   IPOD BLUE LINKS
-===================================================== */
-
+button:active{transform:scale(.97)}
 .blue{
-
-    color:#1674c7;
-
+  background:linear-gradient(#64b8ff,#147bd1);
+  color:white;
+  border-color:#075da8;
+  text-shadow:0 -1px #245;
 }
-
-
-/* =====================================================
-   FILE INPUT
-===================================================== */
-
-input[type="file"]{
-
-    padding:7px;
-
-    background:
-        linear-gradient(
-            #fff,
-            #ddd
-        );
-
+.screen{padding-bottom:70px}
+.list{
+  background:white;
+  border-top:1px solid #aaa;
+  border-bottom:1px solid #aaa;
 }
-
-
-/* =====================================================
-   SMALL IOS STYLE HEADER
-===================================================== */
-
-.ios-header{
-
-    text-align:center;
-
-    padding:5px;
-
-    color:#555;
-
-    font-size:13px;
-
-    font-weight:bold;
-
+.row{
+  min-height:55px;
+  padding:9px 12px;
+  border-bottom:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
 }
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:520px){
-
-    body{
-
-        background:#d1d1d1;
-
-    }
-
-    #app{
-
-        min-height:100vh;
-
-        box-shadow:none;
-
-    }
-
+.row:last-child{border-bottom:0}
+.row:active{background:#ddd}
+.icon{
+  width:38px;height:38px;
+  border-radius:9px;
+  background:linear-gradient(#eee,#aaa);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
 }
-
+.arrow{
+  margin-left:auto;
+  color:#888;
+  font-size:25px;
+}
+.small{font-size:12px;color:#666}
+.muted{color:#777}
+.center{text-align:center;padding:30px 15px}
+.card{
+  margin:12px;
+  background:white;
+  border:1px solid #aaa;
+  border-radius:9px;
+  box-shadow:0 1px 3px #aaa;
+  overflow:hidden;
+}
+.cardhead{
+  background:linear-gradient(#fff,#ddd);
+  padding:10px;
+  font-weight:bold;
+  border-bottom:1px solid #aaa;
+}
+.cardbody{padding:12px}
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  border:1px solid #999;
+  border-radius:6px;
+  background:white;
+  margin:5px 0 10px;
+  font:inherit;
+}
+textarea{min-height:110px;resize:vertical}
+label{
+  font-size:13px;
+  font-weight:bold;
+}
+.profile{
+  padding:20px;
+  text-align:center;
+  background:linear-gradient(#fafafa,#ddd);
+  border-bottom:1px solid #aaa;
+}
+.avatar{
+  width:105px;
+  height:105px;
+  border-radius:22px;
+  object-fit:cover;
+  border:3px solid white;
+  box-shadow:0 2px 7px #777;
+  background:#bbb;
+}
+.avatar.smallAvatar{
+  width:44px;height:44px;border-radius:10px;
+  border:2px solid white;
+}
+.username{
+  font-size:22px;
+  font-weight:bold;
+  margin-top:8px;
+}
+.bio{
+  margin-top:5px;
+  color:#555;
+  white-space:pre-wrap;
+}
+.toolbar{
+  display:flex;
+  gap:8px;
+  padding:10px;
+}
+.toolbar button{flex:1}
+.hidden{display:none!important}
+.message{
+  padding:10px 12px;
+  border-bottom:1px solid #ccc;
+}
+.message.me{
+  background:#e8f4ff;
+}
+.bottom{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  max-width:430px;
+  height:57px;
+  background:linear-gradient(#eee,#bbb);
+  border-top:1px solid #777;
+  display:flex;
+  z-index:10;
+}
+.bottom button{
+  flex:1;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  font-size:11px;
+}
+.bottom button span{
+  display:block;
+  font-size:22px;
+}
+.error{
+  margin:10px;
+  padding:10px;
+  background:#ffdede;
+  border:1px solid #d88;
+  border-radius:7px;
+  color:#900;
+}
+.success{
+  margin:10px;
+  padding:10px;
+  background:#e1ffe1;
+  border:1px solid #8b8;
+  border-radius:7px;
+  color:#174d17;
+}
+.topicTitle{font-size:20px;font-weight:bold}
+.post{
+  padding:12px;
+  border-bottom:1px solid #ccc;
+}
+.postUser{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+a{color:#06c}
 </style>
 </head>
-
 
 <body>
 
 <div id="app">
 
+  <div class="status">
+    <span>iPod</span>
+    <span>Wi-Fi　🔋</span>
+  </div>
 
-<!-- =================================================
-     NAVBAR
-================================================= -->
+  <div class="navbar">
+    <button id="backBtn" class="hidden" onclick="goBack()">‹ Atrás</button>
+    <div id="navTitle" class="navtitle">iPod Community</div>
+    <button id="navAction" class="hidden"></button>
+  </div>
 
-<header class="navbar">
+  <div id="screen" class="screen"></div>
 
-    <button
-        class="navbutton"
-        onclick="goHome()">
-
-        Inicio
-
-    </button>
-
-
-    <h1 id="pageTitle">
-        iPod Forum
-    </h1>
-
-
-    <button
-        class="navbutton"
-        onclick="showProfile()">
-
-        Perfil
-
-    </button>
-
-</header>
-
-
-<div class="screen">
-
-
-<div id="message"></div>
-
-
-<!-- =================================================
-     HOME
-================================================= -->
-
-<div id="home">
-
-
-<input
-    id="search"
-    class="search"
-    placeholder="Buscar en el foro..."
-    oninput="renderTopics()"
->
-
-
-<div class="section">
-
-    <div class="section-title">
-        Categorías
-    </div>
-
-
-    <div class="list">
-
-
-        <div
-            class="item"
-            onclick="openCategory('Música')">
-
-            <div class="item-title">
-                🎵 Música
-            </div>
-
-            <div class="item-info">
-                Música, artistas, álbumes y producción
-            </div>
-
-        </div>
-
-
-        <div
-            class="item"
-            onclick="openCategory('Juegos')">
-
-            <div class="item-title">
-                🎮 Juegos
-            </div>
-
-            <div class="item-info">
-                Videojuegos, consolas y emulación
-            </div>
-
-        </div>
-
-
-        <div
-            class="item"
-            onclick="openCategory('Apps')">
-
-            <div class="item-title">
-                📱 Apps
-            </div>
-
-            <div class="item-info">
-                Aplicaciones, Android, iOS y tecnología
-            </div>
-
-        </div>
-
-
-        <div
-            class="item"
-            onclick="openCategory('Off-topic')">
-
-            <div class="item-title">
-                💬 Off-topic
-            </div>
-
-            <div class="item-info">
-                Conversaciones generales
-            </div>
-
-        </div>
-
-
-    </div>
+  <div class="bottom">
+    <button onclick="showHome()"><span>🏠</span>Inicio</button>
+    <button onclick="showForums()"><span>🗂️</span>Foros</button>
+    <button onclick="showMessages()"><span>💬</span>Mensajes</button>
+    <button onclick="showProfile()"><span>👤</span>Perfil</button>
+  </div>
 
 </div>
-
-
-
-<div class="section">
-
-
-    <div style="
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-    ">
-
-        <div class="section-title">
-            Hilos recientes
-        </div>
-
-
-        <button
-            class="navbutton"
-            onclick="showCreateTopic()">
-
-            + Nuevo
-
-        </button>
-
-    </div>
-
-
-    <div
-        id="topics"
-        class="list">
-
-    </div>
-
-</div>
-
-
-</div>
-
-
-<!-- =================================================
-     PROFILE
-================================================= -->
-
-<div
-    id="profilePage"
-    class="hidden">
-
-
-    <button
-        class="navbutton back"
-        onclick="goHome()">
-
-        ← Volver
-
-    </button>
-
-
-    <div id="profileBox"></div>
-
-
-</div>
-
-
-
-<!-- =================================================
-     CREATE TOPIC
-================================================= -->
-
-<div
-    id="createTopicPage"
-    class="hidden">
-
-
-    <button
-        class="navbutton back"
-        onclick="goHome()">
-
-        ← Volver
-
-    </button>
-
-
-    <div class="card">
-
-
-        <div class="ios-header">
-            NUEVO HILO
-        </div>
-
-
-        <label>
-            Categoría
-        </label>
-
-
-        <select id="topicCategory">
-
-            <option>Música</option>
-
-            <option>Juegos</option>
-
-            <option>Apps</option>
-
-            <option>Off-topic</option>
-
-        </select>
-
-
-        <label>
-            Título
-        </label>
-
-
-        <input
-            id="topicTitle"
-            maxlength="100"
-            placeholder="Título"
-        >
-
-
-        <label>
-            Mensaje
-        </label>
-
-
-        <textarea
-            id="topicBody"
-            placeholder="Escribe tu mensaje..."
-        ></textarea>
-
-
-        <button
-            class="bigbutton"
-            onclick="createTopic()">
-
-            Publicar hilo
-
-        </button>
-
-
-    </div>
-
-</div>
-
-
-
-<!-- =================================================
-     CATEGORY
-================================================= -->
-
-<div
-    id="categoryPage"
-    class="hidden">
-
-
-    <button
-        class="navbutton back"
-        onclick="goHome()">
-
-        ← Volver
-
-    </button>
-
-
-    <div class="ios-header"
-         id="categoryTitle">
-
-    </div>
-
-
-    <div
-        id="categoryTopics"
-        class="list">
-
-    </div>
-
-
-</div>
-
-
-
-<!-- =================================================
-     TOPIC
-================================================= -->
-
-<div
-    id="topicPage"
-    class="hidden">
-
-
-    <button
-        class="navbutton back"
-        onclick="goHome()">
-
-        ← Volver
-
-    </button>
-
-
-    <div id="topicContent"></div>
-
-
-    <div class="section-title">
-        Respuestas
-    </div>
-
-
-    <div id="replies"></div>
-
-
-    <div class="card">
-
-
-        <div class="ios-header">
-            RESPONDER
-        </div>
-
-
-        <textarea
-            id="replyBody"
-            placeholder="Escribe una respuesta..."
-        ></textarea>
-
-
-        <button
-            class="bigbutton"
-            onclick="sendReply()">
-
-            Responder
-
-        </button>
-
-
-    </div>
-
-
-</div>
-
-
-</div>
-
-</div>
-
 
 <script>
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+   ========================================================= */
 
-/* =====================================================
-   STORAGE
-===================================================== */
+const SUPABASE_URL = "TU_SUPABASE_URL";
+const SUPABASE_KEY = "TU_SUPABASE_PUBLISHABLE_KEY";
 
-let profile =
-    JSON.parse(
-        localStorage.getItem(
-            "ipod_forum_profile"
-        ) || "null"
-    );
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-
-let topics =
-    JSON.parse(
-        localStorage.getItem(
-            "ipod_forum_topics"
-        ) || "[]"
-    );
+let currentUser = null;
+let currentProfile = null;
+let currentView = "home";
+let historyStack = [];
 
 
-let replies =
-    JSON.parse(
-        localStorage.getItem(
-            "ipod_forum_replies"
-        ) || "[]"
-    );
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
 
+const screen = document.getElementById("screen");
+const navTitle = document.getElementById("navTitle");
+const backBtn = document.getElementById("backBtn");
+const navAction = document.getElementById("navAction");
 
-let currentTopic = null;
+function esc(value){
+  if(value === null || value === undefined) return "";
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
+function avatar(url){
+  return url || "data:image/svg+xml," + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+      <rect width="100%" height="100%" fill="#aaa"/>
+      <circle cx="100" cy="75" r="40" fill="#ddd"/>
+      <circle cx="100" cy="180" r="70" fill="#ddd"/>
+    </svg>
+  `);
+}
 
-let currentUser =
-    profile
-        ? profile.username
-        : localStorage.getItem(
-            "ipod_forum_username"
-        );
+function setTitle(title){
+  navTitle.textContent = title;
+}
 
+function setBack(show=true){
+  backBtn.classList.toggle("hidden",!show);
+}
 
-/* =====================================================
-   SAVE
-===================================================== */
-
-function saveData(){
-
-    localStorage.setItem(
-        "ipod_forum_topics",
-        JSON.stringify(topics)
-    );
-
-
-    localStorage.setItem(
-        "ipod_forum_replies",
-        JSON.stringify(replies)
-    );
-
+function message(text,type="error"){
+  return `<div class="${type}">${esc(text)}</div>`;
 }
 
 
-/* =====================================================
-   ESCAPE
-===================================================== */
+/* =========================================================
+   PERFIL
+   ========================================================= */
 
-function escapeHTML(text){
+async function ensureProfile(){
 
-    const div =
-        document.createElement("div");
+  if(!currentUser) return null;
 
-    div.textContent =
-        text || "";
+  const {data,error} = await sb
+    .from("profiles")
+    .select("*")
+    .eq("id",currentUser.id)
+    .maybeSingle();
 
-    return div.innerHTML;
+  if(error){
+    console.error(error);
+    return null;
+  }
 
+  if(data){
+    currentProfile=data;
+    return data;
+  }
+
+  /*
+    Si el usuario acaba de confirmar su correo,
+    se crea automáticamente el perfil.
+  */
+
+  const username =
+    currentUser.user_metadata?.username ||
+    "Usuario" + currentUser.id.slice(0,6);
+
+  const {data:newProfile,error:createError} = await sb
+    .from("profiles")
+    .insert({
+      id:currentUser.id,
+      username:username,
+      bio:"",
+      country:"",
+      website:"",
+      avatar_url:""
+    })
+    .select()
+    .single();
+
+  if(createError){
+    console.error(createError);
+    return null;
+  }
+
+  currentProfile=newProfile;
+  return newProfile;
 }
 
 
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-function showMessage(text){
-
-    const box =
-        document.getElementById(
-            "message"
-        );
-
-
-    box.innerHTML =
-        `<div class="message">
-            ${escapeHTML(text)}
-        </div>`;
-
-
-    setTimeout(()=>{
-
-        box.innerHTML = "";
-
-    },3000);
-
-}
-
-
-/* =====================================================
-   HIDE ALL
-===================================================== */
-
-function hideAll(){
-
-    [
-        "home",
-        "profilePage",
-        "createTopicPage",
-        "categoryPage",
-        "topicPage"
-
-    ].forEach(id=>{
-
-        document
-            .getElementById(id)
-            .classList
-            .add("hidden");
-
-    });
-
-}
-
-
-/* =====================================================
-   HOME
-===================================================== */
-
-function goHome(){
-
-    hideAll();
-
-
-    document
-        .getElementById("home")
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById("pageTitle")
-        .textContent =
-        "iPod Forum";
-
-
-    renderTopics();
-
-}
-
-
-/* =====================================================
-   RENDER TOPICS
-===================================================== */
-
-function renderTopics(){
-
-    const container =
-        document.getElementById(
-            "topics"
-        );
-
-
-    const search =
-        (
-            document.getElementById(
-                "search"
-            ).value || ""
-        )
-        .toLowerCase();
-
-
-    const filtered =
-        topics.filter(topic=>{
-
-            return (
-
-                topic.title
-                    .toLowerCase()
-                    .includes(search)
-
-                ||
-
-                topic.body
-                    .toLowerCase()
-                    .includes(search)
-
-                ||
-
-                topic.username
-                    .toLowerCase()
-                    .includes(search)
-
-            );
-
-        });
-
-
-    if(filtered.length === 0){
-
-        container.innerHTML = `
-
-            <div class="empty">
-
-                Todavía no hay hilos.
-
-                <br><br>
-
-                Sé el primero en crear uno.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-
-        filtered.map(topic=>`
-
-            <div
-                class="item"
-                onclick="openTopic(${topic.id})">
-
-
-                <div class="item-title">
-
-                    ${escapeHTML(
-                        topic.title
-                    )}
-
-                </div>
-
-
-                <div class="item-info">
-
-                    ${escapeHTML(
-                        topic.category
-                    )}
-
-                    ·
-
-                    ${escapeHTML(
-                        topic.username
-                    )}
-
-                </div>
-
-
-            </div>
-
-        `).join("");
-
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-function showProfile(){
-
-    hideAll();
-
-
-    document
-        .getElementById(
-            "profilePage"
-        )
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById(
-            "pageTitle"
-        )
-        .textContent =
-        "Perfil";
-
-
-    renderProfile();
-
-}
-
-
-function renderProfile(){
-
-    const box =
-        document.getElementById(
-            "profileBox"
-        );
-
-
-    /* ----------------------------------------------
-       NO PROFILE
-    ---------------------------------------------- */
-
-    if(!profile){
-
-        box.innerHTML = `
-
-            <div class="card">
-
-
-                <div class="profile-header">
-
-                    <div
-                        class="large-avatar"
-                        id="avatarPreview">
-
-                        👤
-
-                    </div>
-
-
-                    <div>
-
-                        <h2 style="margin:0">
-
-                            Crear perfil
-
-                        </h2>
-
-
-                        <div
-                            style="color:#777">
-
-                            Personaliza tu identidad
-                            en el foro.
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <label>
-                    Foto de perfil
-                </label>
-
-
-                <input
-                    type="file"
-                    id="profilePhoto"
-                    accept="image/*"
-                    onchange="previewProfilePhoto(event)"
-                >
-
-
-                <label>
-                    Nombre de usuario
-                </label>
-
-
-                <input
-                    id="profileUsername"
-                    maxlength="25"
-                    placeholder="Tu nombre"
-                >
-
-
-                <label>
-                    Descripción
-                </label>
-
-
-                <textarea
-                    id="profileBio"
-                    maxlength="160"
-                    placeholder="Cuéntanos algo sobre ti..."
-                ></textarea>
-
-
-                <label>
-                    Edad
-                </label>
-
-
-                <input
-                    id="profileAge"
-                    type="number"
-                    min="1"
-                    max="120"
-                    placeholder="Opcional"
-                >
-
-
-                <label>
-                    País
-                </label>
-
-
-                <input
-                    id="profileCountry"
-                    maxlength="40"
-                    placeholder="Ej: Brasil"
-                >
-
-
-                <label>
-                    Sitio web
-                </label>
-
-
-                <input
-                    id="profileWebsite"
-                    maxlength="100"
-                    placeholder="Opcional"
-                >
-
-
-                <button
-                    class="bigbutton"
-                    onclick="createFullProfile()">
-
-                    Crear perfil
-
-                </button>
-
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    /* ----------------------------------------------
-       EXISTING PROFILE
-    ---------------------------------------------- */
-
-    let avatar = "👤";
-
-
-    if(profile.photo){
-
-        avatar = `
-
-            <img
-                src="${profile.photo}"
-                class="avatar-image">
-
-        `;
-
-    }
-
-
-    box.innerHTML = `
-
-        <div class="card profile-card">
-
-
-            <div class="profile-top">
-
-
-                <div class="large-avatar">
-
-                    ${avatar}
-
-                </div>
-
-
-                <div class="profile-main">
-
-                    <h2>
-
-                        ${escapeHTML(
-                            profile.username
-                        )}
-
-                    </h2>
-
-
-                    ${
-                        profile.country
-                        ?
-                        `
-                        <div
-                            class="profile-country">
-
-                            🌎
-                            ${escapeHTML(
-                                profile.country
-                            )}
-
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                </div>
-
-
-            </div>
-
-
-            ${
-                profile.bio
-                ?
-                `
-                <div
-                    class="profile-description">
-
-                    ${escapeHTML(
-                        profile.bio
-                    )}
-
-                </div>
-                `
-                :
-                ""
-            }
-
-
-            <div class="profile-details">
-
-
-                ${
-                    profile.age
-                    ?
-                    `
-                    <div>
-
-                        🎂
-                        ${escapeHTML(
-                            profile.age
-                        )}
-                        años
-
-                    </div>
-                    `
-                    :
-                    ""
-                }
-
-
-                ${
-                    profile.website
-                    ?
-                    `
-                    <div>
-
-                        🔗
-                        ${escapeHTML(
-                            profile.website
-                        )}
-
-                    </div>
-                    `
-                    :
-                    ""
-                }
-
-
-                <div>
-
-                    🗓️ Miembro desde
-
-                    ${new Date(
-                        profile.createdAt
-                    ).toLocaleDateString()}
-
-                </div>
-
-
-            </div>
-
-
-            <button
-                class="bigbutton"
-                onclick="editProfile()">
-
-                ✏️ Editar perfil
-
-            </button>
-
-
-            <br><br>
-
-
-            <button
-                class="bigbutton"
-                onclick="deleteProfile()">
-
-                Cambiar / eliminar perfil
-
-            </button>
-
-
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+async function showHome(){
+
+  currentView="home";
+  setTitle("iPod Community");
+  setBack(false);
+  navAction.classList.add("hidden");
+
+  const userText = currentUser
+    ? `Sesión iniciada como ${esc(currentProfile?.username || "Usuario")}`
+    : "No has iniciado sesión.";
+
+  screen.innerHTML=`
+
+    <div class="profile">
+      <div style="font-size:50px">🎵</div>
+      <div class="username">iPod Community</div>
+      <div class="bio">
+        Una comunidad con estética clásica de iPod touch.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardhead">Cuenta</div>
+      <div class="cardbody">
+        ${userText}
+        <br><br>
+        ${
+          currentUser
+          ? `<button class="blue" onclick="showProfile()">Ver mi perfil</button>
+             <button onclick="logout()">Cerrar sesión</button>`
+          : `<button class="blue" onclick="showLogin()">Iniciar sesión</button>
+             <button onclick="showRegister()">Crear cuenta</button>`
+        }
+      </div>
+    </div>
+
+    <div class="list">
+      <div class="row" onclick="showForums()">
+        <div class="icon">🗂️</div>
+        <div>
+          <b>Foros</b>
+          <div class="small">Habla con la comunidad</div>
         </div>
+        <div class="arrow">›</div>
+      </div>
 
-    `;
+      <div class="row" onclick="showMessages()">
+        <div class="icon">💬</div>
+        <div>
+          <b>Mensajes</b>
+          <div class="small">Mensajes privados</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
 
+      <div class="row" onclick="showUsers()">
+        <div class="icon">👥</div>
+        <div>
+          <b>Usuarios</b>
+          <div class="small">Ver perfiles de la comunidad</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+    </div>
+  `;
 }
 
 
-/* =====================================================
-   PROFILE PHOTO PREVIEW
-===================================================== */
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
-function previewProfilePhoto(event){
+function showLogin(){
 
-    const file =
-        event.target.files[0];
+  currentView="login";
+  setTitle("Iniciar sesión");
+  setBack(true);
 
+  screen.innerHTML=`
 
-    if(!file) return;
+    <div class="card">
+      <div class="cardhead">Cuenta</div>
 
+      <div class="cardbody">
 
-    const reader =
-        new FileReader();
+        <label>Email</label>
+        <input id="loginEmail" type="email">
 
+        <label>Contraseña</label>
+        <input id="loginPassword" type="password">
 
-    reader.onload = function(e){
+        <button class="blue" onclick="login()">
+          Iniciar sesión
+        </button>
 
-        const preview =
-            document.getElementById(
-                "avatarPreview"
-            );
+        <button onclick="showRegister()">
+          Crear una cuenta
+        </button>
 
+        <div id="loginMsg"></div>
 
-        preview.innerHTML = `
+      </div>
+    </div>
+  `;
+}
 
-            <img
-                src="${e.target.result}"
-                class="avatar-image">
+async function login(){
 
-        `;
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
 
-    };
+  const msg=document.getElementById("loginMsg");
 
+  if(!email || !password){
+    msg.innerHTML=message("Completa todos los campos.");
+    return;
+  }
 
-    reader.readAsDataURL(file);
+  const {error}=await sb.auth.signInWithPassword({
+    email,
+    password
+  });
 
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
+
+  await refreshSession();
+  showHome();
 }
 
 
-/* =====================================================
-   CREATE PROFILE
-===================================================== */
+/* =========================================================
+   REGISTRO
+   ========================================================= */
 
-function createFullProfile(){
+function showRegister(){
 
-    const username =
-        document
-            .getElementById(
-                "profileUsername"
-            )
-            .value
-            .trim();
+  currentView="register";
+  setTitle("Crear cuenta");
+  setBack(true);
 
+  screen.innerHTML=`
 
-    const bio =
-        document
-            .getElementById(
-                "profileBio"
-            )
-            .value
-            .trim();
+    <div class="card">
+      <div class="cardhead">Nueva cuenta</div>
 
+      <div class="cardbody">
 
-    const age =
-        document
-            .getElementById(
-                "profileAge"
-            )
-            .value
-            .trim();
+        <label>Nombre de usuario</label>
+        <input id="regUsername" maxlength="30">
 
+        <label>Email</label>
+        <input id="regEmail" type="email">
 
-    const country =
-        document
-            .getElementById(
-                "profileCountry"
-            )
-            .value
-            .trim();
+        <label>Contraseña</label>
+        <input id="regPassword" type="password">
 
+        <button class="blue" onclick="register()">
+          Crear cuenta
+        </button>
 
-    const website =
-        document
-            .getElementById(
-                "profileWebsite"
-            )
-            .value
-            .trim();
+        <div id="registerMsg"></div>
 
-
-    if(username.length < 3){
-
-        showMessage(
-            "El nombre debe tener al menos 3 caracteres."
-        );
-
-        return;
-
-    }
-
-
-    const file =
-        document
-            .getElementById(
-                "profilePhoto"
-            )
-            .files[0];
-
-
-    if(file){
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function(e){
-
-            saveProfile(
-                username,
-                bio,
-                age,
-                country,
-                website,
-                e.target.result
-            );
-
-        };
-
-
-        reader.readAsDataURL(file);
-
-    }
-
-    else{
-
-        saveProfile(
-            username,
-            bio,
-            age,
-            country,
-            website,
-            ""
-        );
-
-    }
-
+      </div>
+    </div>
+  `;
 }
 
+async function register(){
 
-/* =====================================================
-   SAVE PROFILE
-===================================================== */
+  const username=document.getElementById("regUsername").value.trim();
+  const email=document.getElementById("regEmail").value.trim();
+  const password=document.getElementById("regPassword").value;
 
-function saveProfile(
-    username,
-    bio,
-    age,
-    country,
-    website,
-    photo
-){
+  const msg=document.getElementById("registerMsg");
 
-    profile = {
+  if(username.length < 3){
+    msg.innerHTML=message("El nombre debe tener al menos 3 caracteres.");
+    return;
+  }
 
-        username,
-        bio,
-        age,
-        country,
-        website,
-        photo,
+  if(password.length < 6){
+    msg.innerHTML=message("La contraseña debe tener al menos 6 caracteres.");
+    return;
+  }
 
-        createdAt:
-            new Date().toISOString()
+  const {data,error}=await sb.auth.signUp({
+    email,
+    password,
+    options:{
+      data:{
+        username:username
+      },
+      emailRedirectTo:window.location.href
+    }
+  });
 
-    };
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
 
+  if(data.session){
 
-    currentUser =
-        username;
+    currentUser=data.user;
 
+    await ensureProfile();
 
-    localStorage.setItem(
-        "ipod_forum_profile",
-        JSON.stringify(profile)
+    msg.innerHTML=message(
+      "Cuenta creada correctamente.",
+      "success"
     );
 
+    setTimeout(showHome,800);
 
-    localStorage.setItem(
-        "ipod_forum_username",
-        username
+  }else{
+
+    msg.innerHTML=message(
+      "Cuenta creada. Revisa tu email para confirmar la cuenta.",
+      "success"
     );
-
-
-    showMessage(
-        "Perfil creado correctamente."
-    );
-
-
-    renderProfile();
-
+  }
 }
 
 
-/* =====================================================
-   EDIT PROFILE
-===================================================== */
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function logout(){
+
+  await sb.auth.signOut();
+
+  currentUser=null;
+  currentProfile=null;
+
+  showHome();
+}
+
+
+/* =========================================================
+   PERFIL
+   ========================================================= */
+
+async function showProfile(){
+
+  if(!currentUser){
+    showLogin();
+    return;
+  }
+
+  await ensureProfile();
+
+  currentView="profile";
+  setTitle("Mi perfil");
+  setBack(false);
+
+  const p=currentProfile;
+
+  screen.innerHTML=`
+
+    <div class="profile">
+
+      <img
+        id="profileAvatar"
+        class="avatar"
+        src="${avatar(p?.avatar_url)}"
+      >
+
+      <div class="username">
+        ${esc(p?.username)}
+      </div>
+
+      <div class="bio">
+        ${esc(p?.bio || "Sin descripción.")}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="cardhead">
+        Información
+      </div>
+
+      <div class="cardbody">
+
+        <b>País</b>
+        <div>${esc(p?.country || "No especificado")}</div>
+        <br>
+
+        <b>Edad</b>
+        <div>${p?.age || "No especificada"}</div>
+        <br>
+
+        <b>Web</b>
+        <div>${esc(p?.website || "No especificada")}</div>
+
+      </div>
+
+    </div>
+
+    <div class="toolbar">
+      <button class="blue" onclick="editProfile()">
+        Editar perfil
+      </button>
+
+      <button onclick="showUsers()">
+        Usuarios
+      </button>
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   EDITAR PERFIL
+   ========================================================= */
 
 function editProfile(){
 
-    const box =
-        document.getElementById(
-            "profileBox"
-        );
+  const p=currentProfile;
+
+  screen.innerHTML=`
+
+    <div class="card">
+
+      <div class="cardhead">
+        Editar perfil
+      </div>
+
+      <div class="cardbody">
+
+        <label>Foto de perfil</label>
+        <input
+          id="avatarFile"
+          type="file"
+          accept="image/*"
+        >
+
+        <img
+          id="previewAvatar"
+          class="avatar"
+          src="${avatar(p.avatar_url)}"
+        >
+
+        <label>Nombre de usuario</label>
+        <input
+          id="editUsername"
+          maxlength="30"
+          value="${esc(p.username)}"
+        >
+
+        <label>Descripción</label>
+        <textarea id="editBio">${esc(p.bio)}</textarea>
+
+        <label>Edad</label>
+        <input
+          id="editAge"
+          type="number"
+          min="1"
+          max="120"
+          value="${p.age || ""}"
+        >
+
+        <label>País</label>
+        <input
+          id="editCountry"
+          value="${esc(p.country)}"
+        >
+
+        <label>Página web</label>
+        <input
+          id="editWebsite"
+          value="${esc(p.website)}"
+          placeholder="https://..."
+        >
+
+        <button
+          class="blue"
+          onclick="saveProfile()"
+        >
+          Guardar
+        </button>
+
+        <div id="profileMsg"></div>
+
+      </div>
+    </div>
+  `;
+
+  document.getElementById("avatarFile")
+    .addEventListener("change",function(){
+
+      const file=this.files[0];
+
+      if(!file)return;
+
+      document.getElementById("previewAvatar").src=
+        URL.createObjectURL(file);
+    });
+}
 
 
-    box.innerHTML = `
+/* =========================================================
+   GUARDAR PERFIL + FOTO
+   ========================================================= */
 
-        <div class="card">
+async function saveProfile(){
+
+  const msg=document.getElementById("profileMsg");
+
+  const username=
+    document.getElementById("editUsername").value.trim();
+
+  const bio=
+    document.getElementById("editBio").value.trim();
+
+  const age=
+    document.getElementById("editAge").value;
+
+  const country=
+    document.getElementById("editCountry").value.trim();
+
+  const website=
+    document.getElementById("editWebsite").value.trim();
+
+  const file=
+    document.getElementById("avatarFile").files[0];
+
+  if(!username){
+    msg.innerHTML=message("Necesitas un nombre de usuario.");
+    return;
+  }
+
+  let avatar_url=currentProfile.avatar_url || "";
+
+  if(file){
+
+    const extension=
+      file.name.split(".").pop().toLowerCase();
+
+    const path=
+      `${currentUser.id}/${crypto.randomUUID()}.${extension}`;
+
+    const {error:uploadError}=await sb.storage
+      .from("avatars")
+      .upload(path,file,{
+        upsert:true,
+        contentType:file.type
+      });
+
+    if(uploadError){
+      msg.innerHTML=message(
+        "No se pudo subir la foto: " +
+        uploadError.message
+      );
+      return;
+    }
+
+    const {data:urlData}=sb.storage
+      .from("avatars")
+      .getPublicUrl(path);
+
+    avatar_url=urlData.publicUrl;
+  }
+
+  const {data,error}=await sb
+    .from("profiles")
+    .update({
+      username,
+      bio,
+      age:age ? Number(age) : null,
+      country,
+      website,
+      avatar_url
+    })
+    .eq("id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
+
+  currentProfile=data;
+
+  msg.innerHTML=message(
+    "Perfil actualizado.",
+    "success"
+  );
+
+  setTimeout(showProfile,700);
+}
 
 
-            <div class="ios-header">
+/* =========================================================
+   USUARIOS
+   ========================================================= */
 
-                EDITAR PERFIL
+async function showUsers(){
 
+  currentView="users";
+  setTitle("Usuarios");
+  setBack(true);
+
+  screen.innerHTML=
+    `<div class="center">Cargando usuarios...</div>`;
+
+  const {data,error}=await sb
+    .from("profiles")
+    .select("id,username,bio,avatar_url")
+    .order("username");
+
+  if(error){
+    screen.innerHTML=message(error.message);
+    return;
+  }
+
+  if(!data.length){
+    screen.innerHTML=
+      `<div class="center">Todavía no hay usuarios.</div>`;
+    return;
+  }
+
+  screen.innerHTML=`
+
+    <div class="list">
+
+      ${data.map(user=>`
+
+        <div class="row"
+             onclick="viewUser('${user.id}')">
+
+          <img
+            class="avatar smallAvatar"
+            src="${avatar(user.avatar_url)}"
+          >
+
+          <div>
+            <b>${esc(user.username)}</b>
+            <div class="small">
+              ${esc(user.bio || "Sin descripción")}
             </div>
+          </div>
 
-
-            <div
-                class="large-avatar"
-                id="avatarPreview">
-
-
-                ${
-                    profile.photo
-                    ?
-                    `
-                    <img
-                        src="${profile.photo}"
-                        class="avatar-image">
-                    `
-                    :
-                    "👤"
-                }
-
-
-            </div>
-
-
-            <label>
-                Cambiar foto
-            </label>
-
-
-            <input
-                type="file"
-                id="profilePhoto"
-                accept="image/*"
-                onchange="previewProfilePhoto(event)"
-            >
-
-
-            <label>
-                Nombre
-            </label>
-
-
-            <input
-                id="profileUsername"
-                maxlength="25"
-                value="${escapeHTML(
-                    profile.username
-                )}"
-            >
-
-
-            <label>
-                Descripción
-            </label>
-
-
-            <textarea
-                id="profileBio"
-                maxlength="160"
-            >${escapeHTML(
-                profile.bio || ""
-            )}</textarea>
-
-
-            <label>
-                Edad
-            </label>
-
-
-            <input
-                id="profileAge"
-                type="number"
-                value="${escapeHTML(
-                    profile.age || ""
-                )}"
-            >
-
-
-            <label>
-                País
-            </label>
-
-
-            <input
-                id="profileCountry"
-                maxlength="40"
-                value="${escapeHTML(
-                    profile.country || ""
-                )}"
-            >
-
-
-            <label>
-                Sitio web
-            </label>
-
-
-            <input
-                id="profileWebsite"
-                maxlength="100"
-                value="${escapeHTML(
-                    profile.website || ""
-                )}"
-            >
-
-
-            <button
-                class="bigbutton"
-                onclick="updateProfile()">
-
-                Guardar cambios
-
-            </button>
-
+          <div class="arrow">›</div>
 
         </div>
 
+      `).join("")}
+
+    </div>
+  `;
+}
+
+
+async function viewUser(id){
+
+  setTitle("Perfil");
+  setBack(true);
+
+  screen.innerHTML=
+    `<div class="center">Cargando perfil...</div>`;
+
+  const {data,error}=await sb
+    .from("profiles")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  if(error){
+    screen.innerHTML=message(error.message);
+    return;
+  }
+
+  screen.innerHTML=`
+
+    <div class="profile">
+
+      <img
+        class="avatar"
+        src="${avatar(data.avatar_url)}"
+      >
+
+      <div class="username">
+        ${esc(data.username)}
+      </div>
+
+      <div class="bio">
+        ${esc(data.bio || "Sin descripción.")}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="cardhead">Información</div>
+
+      <div class="cardbody">
+
+        <b>País</b>
+        <div>${esc(data.country || "No especificado")}</div>
+
+        <br>
+
+        <b>Edad</b>
+        <div>${data.age || "No especificada"}</div>
+
+        <br>
+
+        ${
+          data.website
+          ? `<b>Web</b><br>
+             <a href="${esc(data.website)}"
+                target="_blank">
+                ${esc(data.website)}
+             </a>`
+          : ""
+        }
+
+      </div>
+
+    </div>
+
+    ${
+      currentUser && currentUser.id !== id
+      ? `<div class="toolbar">
+          <button class="blue"
+                  onclick="startMessage('${id}')">
+            💬 Enviar mensaje
+          </button>
+         </div>`
+      : ""
+    }
+  `;
+}
+
+
+/* =========================================================
+   FOROS
+   ========================================================= */
+
+async function showForums(){
+
+  currentView="forums";
+  setTitle("Foros");
+  setBack(false);
+
+  navAction.classList.remove("hidden");
+  navAction.textContent="+";
+  navAction.onclick=showCreateForum;
+
+  screen.innerHTML=
+    `<div class="center">Cargando foros...</div>`;
+
+  const {data,error}=await sb
+    .from("topics")
+    .select(`
+      id,
+      category,
+      title,
+      body,
+      user_id,
+      created_at,
+      profiles(
+        username,
+        avatar_url
+      )
+    `)
+    .order("created_at",{ascending:false});
+
+  if(error){
+    screen.innerHTML=message(error.message);
+    return;
+  }
+
+  if(!data.length){
+
+    screen.innerHTML=`
+
+      <div class="center">
+
+        <div style="font-size:55px">🗂️</div>
+
+        <h2>No hay foros todavía</h2>
+
+        <p class="muted">
+          Sé el primero en crear un foro.
+        </p>
+
+        ${
+          currentUser
+          ? `<button class="blue"
+                    onclick="showCreateForum()">
+               Crear foro
+             </button>`
+          : `<button class="blue"
+                    onclick="showLogin()">
+               Iniciar sesión
+             </button>`
+        }
+
+      </div>
     `;
 
+    return;
+  }
+
+  screen.innerHTML=`
+
+    <div class="list">
+
+      ${data.map(topic=>`
+
+        <div class="row"
+             onclick="openForum(${topic.id})">
+
+          <img
+            class="avatar smallAvatar"
+            src="${avatar(topic.profiles?.avatar_url)}"
+          >
+
+          <div>
+
+            <b>${esc(topic.title)}</b>
+
+            <div class="small">
+              ${esc(topic.category)}
+              ·
+              ${esc(topic.profiles?.username || "Usuario")}
+            </div>
+
+          </div>
+
+          <div class="arrow">›</div>
+
+        </div>
+
+      `).join("")}
+
+    </div>
+  `;
 }
 
 
-/* =====================================================
-   UPDATE PROFILE
-===================================================== */
+/* =========================================================
+   CREAR FORO
+   ========================================================= */
 
-function updateProfile(){
+function showCreateForum(){
 
-    const username =
-        document
-            .getElementById(
-                "profileUsername"
-            )
-            .value
-            .trim();
+  if(!currentUser){
+    showLogin();
+    return;
+  }
 
+  currentView="createForum";
+  setTitle("Nuevo foro");
+  setBack(true);
 
-    const bio =
-        document
-            .getElementById(
-                "profileBio"
-            )
-            .value
-            .trim();
+  navAction.classList.add("hidden");
 
+  screen.innerHTML=`
 
-    const age =
-        document
-            .getElementById(
-                "profileAge"
-            )
-            .value
-            .trim();
+    <div class="card">
 
+      <div class="cardhead">
+        Crear un foro
+      </div>
 
-    const country =
-        document
-            .getElementById(
-                "profileCountry"
-            )
-            .value
-            .trim();
+      <div class="cardbody">
 
+        <label>Categoría</label>
 
-    const website =
-        document
-            .getElementById(
-                "profileWebsite"
-            )
-            .value
-            .trim();
+        <select id="forumCategory">
 
+          <option>Música</option>
+          <option>Juegos</option>
+          <option>Apps</option>
+          <option>Off-topic</option>
 
-    if(username.length < 3){
+        </select>
 
-        showMessage(
-            "El nombre debe tener al menos 3 caracteres."
-        );
+        <label>Título</label>
 
-        return;
+        <input
+          id="forumTitle"
+          maxlength="120"
+          placeholder="Título del foro"
+        >
 
-    }
+        <label>Contenido</label>
 
+        <textarea
+          id="forumBody"
+          maxlength="10000"
+          placeholder="Escribe algo..."
+        ></textarea>
 
-    const file =
-        document
-            .getElementById(
-                "profilePhoto"
-            )
-            .files[0];
+        <button
+          class="blue"
+          onclick="createForum()">
+          Publicar foro
+        </button>
 
+        <div id="forumMsg"></div>
 
-    if(file){
+      </div>
 
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function(e){
-
-            finishUpdate(
-                username,
-                bio,
-                age,
-                country,
-                website,
-                e.target.result
-            );
-
-        };
-
-
-        reader.readAsDataURL(file);
-
-    }
-
-    else{
-
-        finishUpdate(
-            username,
-            bio,
-            age,
-            country,
-            website,
-            profile.photo
-        );
-
-    }
-
+    </div>
+  `;
 }
 
 
-/* =====================================================
-   FINISH UPDATE
-===================================================== */
+async function createForum(){
 
-function finishUpdate(
-    username,
-    bio,
-    age,
-    country,
-    website,
-    photo
-){
+  const category=
+    document.getElementById("forumCategory").value;
 
-    profile = {
+  const title=
+    document.getElementById("forumTitle").value.trim();
 
-        ...profile,
+  const body=
+    document.getElementById("forumBody").value.trim();
 
+  const msg=document.getElementById("forumMsg");
+
+  if(!title || !body){
+    msg.innerHTML=
+      message("Escribe un título y contenido.");
+    return;
+  }
+
+  const {data,error}=await sb
+    .from("topics")
+    .insert({
+      category,
+      title,
+      body,
+      user_id:currentUser.id
+    })
+    .select()
+    .single();
+
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
+
+  openForum(data.id);
+}
+
+
+/* =========================================================
+   ABRIR FORO
+   ========================================================= */
+
+async function openForum(id){
+
+  currentView="forum";
+  setTitle("Foro");
+  setBack(true);
+  navAction.classList.add("hidden");
+
+  screen.innerHTML=
+    `<div class="center">Cargando...</div>`;
+
+  const {data:topic,error:topicError}=await sb
+    .from("topics")
+    .select(`
+      *,
+      profiles(
         username,
-        bio,
-        age,
-        country,
-        website,
-        photo
+        avatar_url
+      )
+    `)
+    .eq("id",id)
+    .single();
 
-    };
+  if(topicError){
+    screen.innerHTML=message(topicError.message);
+    return;
+  }
 
+  const {data:replies,error:replyError}=await sb
+    .from("replies")
+    .select(`
+      *,
+      profiles(
+        username,
+        avatar_url
+      )
+    `)
+    .eq("topic_id",id)
+    .order("created_at");
 
-    currentUser =
-        username;
+  if(replyError){
+    screen.innerHTML=message(replyError.message);
+    return;
+  }
 
+  screen.innerHTML=`
 
-    localStorage.setItem(
-        "ipod_forum_profile",
-        JSON.stringify(profile)
-    );
+    <div class="card">
 
+      <div class="cardbody">
 
-    localStorage.setItem(
-        "ipod_forum_username",
-        username
-    );
+        <div class="topicTitle">
+          ${esc(topic.title)}
+        </div>
 
+        <div class="small">
+          ${esc(topic.category)}
+        </div>
 
-    showMessage(
-        "Perfil actualizado."
-    );
+        <br>
 
+        <div class="postUser">
 
-    renderProfile();
+          <img
+            class="avatar smallAvatar"
+            src="${avatar(topic.profiles?.avatar_url)}"
+          >
 
-}
+          <b>
+            ${esc(topic.profiles?.username || "Usuario")}
+          </b>
 
+        </div>
 
-/* =====================================================
-   DELETE PROFILE
-===================================================== */
+        <div style="white-space:pre-wrap">
+          ${esc(topic.body)}
+        </div>
 
-function deleteProfile(){
+      </div>
 
-    if(!confirm(
-        "¿Eliminar tu perfil de este dispositivo?"
-    )) return;
+    </div>
 
+    <div class="card">
 
-    profile = null;
+      <div class="cardhead">
+        Respuestas (${replies.length})
+      </div>
 
-    currentUser = null;
+      ${
+        replies.length
+        ? replies.map(reply=>`
 
+          <div class="post">
 
-    localStorage.removeItem(
-        "ipod_forum_profile"
-    );
+            <div class="postUser">
 
+              <img
+                class="avatar smallAvatar"
+                src="${avatar(reply.profiles?.avatar_url)}"
+              >
 
-    localStorage.removeItem(
-        "ipod_forum_username"
-    );
-
-
-    showMessage(
-        "Perfil eliminado."
-    );
-
-
-    renderProfile();
-
-}
-
-
-/* =====================================================
-   CREATE TOPIC PAGE
-===================================================== */
-
-function showCreateTopic(){
-
-    if(!currentUser){
-
-        showMessage(
-            "Primero debes crear un perfil."
-        );
-
-
-        showProfile();
-
-        return;
-
-    }
-
-
-    hideAll();
-
-
-    document
-        .getElementById(
-            "createTopicPage"
-        )
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById(
-            "pageTitle"
-        )
-        .textContent =
-        "Nuevo hilo";
-
-}
-
-
-/* =====================================================
-   CREATE TOPIC
-===================================================== */
-
-function createTopic(){
-
-    if(!currentUser){
-
-        showMessage(
-            "Primero crea un perfil."
-        );
-
-        return;
-
-    }
-
-
-    const category =
-        document
-            .getElementById(
-                "topicCategory"
-            )
-            .value;
-
-
-    const title =
-        document
-            .getElementById(
-                "topicTitle"
-            )
-            .value
-            .trim();
-
-
-    const body =
-        document
-            .getElementById(
-                "topicBody"
-            )
-            .value
-            .trim();
-
-
-    if(!title || !body){
-
-        showMessage(
-            "Completa el título y el mensaje."
-        );
-
-        return;
-
-    }
-
-
-    const topic = {
-
-        id:
-            Date.now(),
-
-        category:
-            category,
-
-        title:
-            title,
-
-        body:
-            body,
-
-        username:
-            currentUser,
-
-        createdAt:
-            new Date().toISOString()
-
-    };
-
-
-    topics.unshift(topic);
-
-
-    saveData();
-
-
-    document
-        .getElementById(
-            "topicTitle"
-        )
-        .value = "";
-
-
-    document
-        .getElementById(
-            "topicBody"
-        )
-        .value = "";
-
-
-    showMessage(
-        "Hilo publicado."
-    );
-
-
-    setTimeout(
-        goHome,
-        500
-    );
-
-}
-
-
-/* =====================================================
-   CATEGORY
-===================================================== */
-
-function openCategory(category){
-
-    hideAll();
-
-
-    document
-        .getElementById(
-            "categoryPage"
-        )
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById(
-            "pageTitle"
-        )
-        .textContent =
-        category;
-
-
-    document
-        .getElementById(
-            "categoryTitle"
-        )
-        .textContent =
-        category;
-
-
-    const container =
-        document
-            .getElementById(
-                "categoryTopics"
-            );
-
-
-    const filtered =
-        topics.filter(
-            topic =>
-                topic.category === category
-        );
-
-
-    if(filtered.length === 0){
-
-        container.innerHTML = `
-
-            <div class="empty">
-
-                No hay hilos en esta categoría.
-
-                <br><br>
-
-                Puedes crear el primero.
+              <b>
+                ${esc(reply.profiles?.username || "Usuario")}
+              </b>
 
             </div>
 
-        `;
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-
-        filtered.map(topic=>`
-
-            <div
-                class="item"
-                onclick="openTopic(${topic.id})">
-
-
-                <div class="item-title">
-
-                    ${escapeHTML(
-                        topic.title
-                    )}
-
-                </div>
-
-
-                <div class="item-info">
-
-                    ${escapeHTML(
-                        topic.username
-                    )}
-
-                </div>
-
-
+            <div style="white-space:pre-wrap">
+              ${esc(reply.body)}
             </div>
 
-        `).join("");
+          </div>
 
+        `).join("")
+        : `<div class="center muted">
+             Todavía no hay respuestas.
+           </div>`
+      }
+
+    </div>
+
+    ${
+      currentUser
+      ? `
+        <div class="card">
+
+          <div class="cardhead">
+            Responder
+          </div>
+
+          <div class="cardbody">
+
+            <textarea
+              id="replyBody"
+              placeholder="Escribe tu respuesta..."
+            ></textarea>
+
+            <button
+              class="blue"
+              onclick="sendReply(${id})">
+              Publicar respuesta
+            </button>
+
+            <div id="replyMsg"></div>
+
+          </div>
+
+        </div>
+      `
+      : `
+        <div class="center">
+          <button
+            class="blue"
+            onclick="showLogin()">
+            Inicia sesión para responder
+          </button>
+        </div>
+      `
+    }
+  `;
 }
 
 
-/* =====================================================
-   OPEN TOPIC
-===================================================== */
-
-function openTopic(id){
-
-    const topic =
-        topics.find(
-            t => t.id === id
-        );
-
-
-    if(!topic){
-
-        showMessage(
-            "No se encontró el hilo."
-        );
-
-        return;
-
-    }
-
-
-    currentTopic =
-        id;
-
-
-    hideAll();
-
-
-    document
-        .getElementById(
-            "topicPage"
-        )
-        .classList
-        .remove("hidden");
-
-
-    document
-        .getElementById(
-            "pageTitle"
-        )
-        .textContent =
-        "Hilo";
-
-
-    document
-        .getElementById(
-            "topicContent"
-        )
-        .innerHTML = `
-
-            <div class="card">
-
-
-                <div class="topic-category">
-
-                    ${escapeHTML(
-                        topic.category
-                    )}
-
-                </div>
-
-
-                <div class="topic-title">
-
-                    ${escapeHTML(
-                        topic.title
-                    )}
-
-                </div>
-
-
-                <div class="topic-author">
-
-                    Por
-                    <span class="blue">
-
-                        ${escapeHTML(
-                            topic.username
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                <div class="topic-body">
-
-                    ${escapeHTML(
-                        topic.body
-                    )}
-
-                </div>
-
-
-            </div>
-
-        `;
-
-
-    renderReplies();
-
-}
-
-
-/* =====================================================
-   REPLIES
-===================================================== */
-
-function renderReplies(){
-
-    const container =
-        document.getElementById(
-            "replies"
-        );
-
-
-    const topicReplies =
-        replies.filter(
-            reply =>
-                reply.topicId === currentTopic
-        );
-
-
-    if(topicReplies.length === 0){
-
-        container.innerHTML = `
-
-            <div class="empty">
-
-                Todavía no hay respuestas.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    container.innerHTML =
-
-        topicReplies.map(reply=>`
-
-            <div class="reply">
-
-
-                <div class="reply-user">
-
-                    ${escapeHTML(
-                        reply.username
-                    )}
-
-                </div>
-
-
-                <div class="reply-date">
-
-                    ${new Date(
-                        reply.createdAt
-                    ).toLocaleString()}
-
-                </div>
-
-
-                <div class="reply-body">
-
-                    ${escapeHTML(
-                        reply.body
-                    )}
-
-                </div>
-
-
-            </div>
-
-        `).join("");
-
-}
-
-
-/* =====================================================
-   SEND REPLY
-===================================================== */
-
-function sendReply(){
-
-    if(!currentUser){
-
-        showMessage(
-            "Primero crea un perfil."
-        );
-
-
-        showProfile();
-
-        return;
-
-    }
-
-
-    const textarea =
-        document.getElementById(
-            "replyBody"
-        );
-
-
-    const body =
-        textarea.value.trim();
-
-
-    if(!body){
-
-        showMessage(
-            "Escribe una respuesta."
-        );
-
-        return;
-
-    }
-
-
-    replies.push({
-
-        id:
-            Date.now(),
-
-        topicId:
-            currentTopic,
-
-        body:
-            body,
-
-        username:
-            currentUser,
-
-        createdAt:
-            new Date().toISOString()
-
+async function sendReply(topicId){
+
+  const body=
+    document.getElementById("replyBody").value.trim();
+
+  const msg=document.getElementById("replyMsg");
+
+  if(!body){
+    msg.innerHTML=message("Escribe una respuesta.");
+    return;
+  }
+
+  const {error}=await sb
+    .from("replies")
+    .insert({
+      topic_id:topicId,
+      body,
+      user_id:currentUser.id
     });
 
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
 
-    saveData();
-
-
-    textarea.value = "";
-
-
-    renderReplies();
-
+  openForum(topicId);
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================================================
+   MENSAJES PRIVADOS
+   ========================================================= */
 
-goHome();
+async function showMessages(){
+
+  if(!currentUser){
+    showLogin();
+    return;
+  }
+
+  currentView="messages";
+  setTitle("Mensajes");
+  setBack(false);
+
+  navAction.classList.remove("hidden");
+  navAction.textContent="+";
+  navAction.onclick=showNewMessage;
+
+  screen.innerHTML=
+    `<div class="center">Cargando mensajes...</div>`;
+
+  /*
+    Esta consulta usa la tabla messages.
+    Debes crearla en Supabase con el SQL indicado
+    después del código.
+  */
+
+  const {data,error}=await sb
+    .from("messages")
+    .select(`
+      id,
+      sender_id,
+      receiver_id,
+      body,
+      created_at,
+      sender:profiles!messages_sender_id_fkey(
+        username,
+        avatar_url
+      ),
+      receiver:profiles!messages_receiver_id_fkey(
+        username,
+        avatar_url
+      )
+    `)
+    .or(
+      `sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`
+    )
+    .order("created_at",{ascending:false});
+
+  if(error){
+    screen.innerHTML=message(
+      "No se pudieron cargar los mensajes. " +
+      error.message
+    );
+    return;
+  }
+
+  if(!data.length){
+
+    screen.innerHTML=`
+
+      <div class="center">
+
+        <div style="font-size:55px">💬</div>
+
+        <h2>No tienes mensajes</h2>
+
+        <button
+          class="blue"
+          onclick="showNewMessage()">
+          Nuevo mensaje
+        </button>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  const users={};
+
+  data.forEach(m=>{
+
+    const other=
+      m.sender_id===currentUser.id
+      ? m.receiver
+      : m.sender;
+
+    const id=
+      m.sender_id===currentUser.id
+      ? m.receiver_id
+      : m.sender_id;
+
+    if(!users[id]){
+      users[id]={
+        id,
+        username:other?.username || "Usuario",
+        avatar_url:other?.avatar_url || "",
+        body:m.body,
+        date:m.created_at
+      };
+    }
+
+  });
+
+  screen.innerHTML=`
+
+    <div class="list">
+
+      ${Object.values(users).map(u=>`
+
+        <div class="row"
+             onclick="openConversation('${u.id}')">
+
+          <img
+            class="avatar smallAvatar"
+            src="${avatar(u.avatar_url)}"
+          >
+
+          <div>
+
+            <b>${esc(u.username)}</b>
+
+            <div class="small">
+              ${esc(u.body.slice(0,60))}
+            </div>
+
+          </div>
+
+          <div class="arrow">›</div>
+
+        </div>
+
+      `).join("")}
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   NUEVO MENSAJE
+   ========================================================= */
+
+function showNewMessage(){
+
+  if(!currentUser){
+    showLogin();
+    return;
+  }
+
+  currentView="newMessage";
+  setTitle("Nuevo mensaje");
+  setBack(true);
+
+  screen.innerHTML=`
+
+    <div class="card">
+
+      <div class="cardhead">
+        Enviar mensaje
+      </div>
+
+      <div class="cardbody">
+
+        <label>Usuario</label>
+
+        <input
+          id="messageUser"
+          placeholder="Nombre de usuario"
+        >
+
+        <label>Mensaje</label>
+
+        <textarea
+          id="messageBody"
+          placeholder="Escribe tu mensaje..."
+        ></textarea>
+
+        <button
+          class="blue"
+          onclick="sendNewMessage()">
+          Enviar
+        </button>
+
+        <div id="messageMsg"></div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+async function startMessage(userId){
+
+  if(!currentUser){
+    showLogin();
+    return;
+  }
+
+  showNewMessage();
+
+  const {data}=await sb
+    .from("profiles")
+    .select("username")
+    .eq("id",userId)
+    .single();
+
+  if(data){
+    document.getElementById("messageUser").value=
+      data.username;
+  }
+}
+
+
+async function sendNewMessage(){
+
+  const username=
+    document.getElementById("messageUser").value.trim();
+
+  const body=
+    document.getElementById("messageBody").value.trim();
+
+  const msg=document.getElementById("messageMsg");
+
+  if(!username || !body){
+    msg.innerHTML=message("Completa todos los campos.");
+    return;
+  }
+
+  const {data:user,error:userError}=await sb
+    .from("profiles")
+    .select("id")
+    .eq("username",username)
+    .single();
+
+  if(userError || !user){
+    msg.innerHTML=
+      message("No existe ese usuario.");
+    return;
+  }
+
+  if(user.id===currentUser.id){
+    msg.innerHTML=
+      message("No puedes enviarte un mensaje a ti mismo.");
+    return;
+  }
+
+  const {error}=await sb
+    .from("messages")
+    .insert({
+      sender_id:currentUser.id,
+      receiver_id:user.id,
+      body
+    });
+
+  if(error){
+    msg.innerHTML=message(error.message);
+    return;
+  }
+
+  openConversation(user.id);
+}
+
+
+/* =========================================================
+   CONVERSACIÓN
+   ========================================================= */
+
+async function openConversation(userId){
+
+  currentView="conversation";
+  setTitle("Mensajes");
+  setBack(true);
+
+  const {data:user}=await sb
+    .from("profiles")
+    .select("*")
+    .eq("id",userId)
+    .single();
+
+  const {data,error}=await sb
+    .from("messages")
+    .select("*")
+    .or(
+      `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
+    )
+    .order("created_at");
+
+  if(error){
+    screen.innerHTML=message(error.message);
+    return;
+  }
+
+  screen.innerHTML=`
+
+    <div class="profile" style="padding:12px">
+
+      <img
+        class="avatar smallAvatar"
+        src="${avatar(user?.avatar_url)}"
+      >
+
+      <div class="username" style="font-size:17px">
+        ${esc(user?.username)}
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      ${
+        data.length
+        ? data.map(m=>`
+
+          <div class="message ${
+            m.sender_id===currentUser.id
+            ? "me"
+            : ""
+          }">
+
+            <b>
+              ${
+                m.sender_id===currentUser.id
+                ? "Tú"
+                : esc(user?.username)
+              }
+            </b>
+
+            <div style="white-space:pre-wrap">
+              ${esc(m.body)}
+            </div>
+
+          </div>
+
+        `).join("")
+        : `<div class="center muted">
+             No hay mensajes todavía.
+           </div>`
+      }
+
+    </div>
+
+    <div class="card">
+
+      <div class="cardbody">
+
+        <textarea
+          id="conversationBody"
+          placeholder="Escribe un mensaje..."
+        ></textarea>
+
+        <button
+          class="blue"
+          onclick="sendConversationMessage('${userId}')">
+          Enviar
+        </button>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+async function sendConversationMessage(userId){
+
+  const body=
+    document.getElementById("conversationBody")
+      .value.trim();
+
+  if(!body)return;
+
+  const {error}=await sb
+    .from("messages")
+    .insert({
+      sender_id:currentUser.id,
+      receiver_id:userId,
+      body
+    });
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  openConversation(userId);
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+
+function goBack(){
+
+  if(currentView==="login" ||
+     currentView==="register" ||
+     currentView==="profile" ||
+     currentView==="users"){
+    showHome();
+    return;
+  }
+
+  if(currentView==="createForum"){
+    showForums();
+    return;
+  }
+
+  if(currentView==="forum"){
+    showForums();
+    return;
+  }
+
+  if(currentView==="newMessage"){
+    showMessages();
+    return;
+  }
+
+  if(currentView==="conversation"){
+    showMessages();
+    return;
+  }
+
+  showHome();
+}
+
+
+/* =========================================================
+   SESIÓN SUPABASE
+   ========================================================= */
+
+async function refreshSession(){
+
+  const {data}=await sb.auth.getSession();
+
+  currentUser=data.session?.user || null;
+
+  if(currentUser){
+    await ensureProfile();
+  }else{
+    currentProfile=null;
+  }
+}
+
+sb.auth.onAuthStateChange(async(event,session)=>{
+
+  currentUser=session?.user || null;
+
+  if(currentUser){
+    await ensureProfile();
+  }else{
+    currentProfile=null;
+  }
+
+});
+
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+(async()=>{
+
+  await refreshSession();
+
+  showHome();
+
+})();
+
+
+/* =========================================================
+   ACTUALIZACIÓN EN TIEMPO REAL
+   ========================================================= */
+
+sb.channel("forum-realtime")
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"topics"
+    },
+    ()=>{
+      if(currentView==="forums"){
+        showForums();
+      }
+    }
+  )
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"replies"
+    },
+    ()=>{
+      if(currentView==="forum"){
+        /*
+          La página se actualizará cuando vuelva
+          a abrir el foro.
+        */
+      }
+    }
+  )
+  .subscribe();
 
 </script>
 
